@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="book.Pages.Reader.ReaderNavigationPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Menu Độc giả">
+    <VerticalStackLayout Spacing="15" Padding="20">
+        <Label Text="Menu Độc giả" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" Margin="0,20"/>
+        
+        <Button Text="Trang chủ" 
+                Clicked="OnHomeClicked"
+                HeightRequest="60"
+                FontSize="16"/>
+        
+        <Button Text="Sách của tôi" 
+                Clicked="OnMyLoansClicked"
+                HeightRequest="60"
+                FontSize="16"/>
+        
+        <Button Text="Tìm kiếm Sách" 
+                Clicked="OnSearchClicked"
+                HeightRequest="60"
+                FontSize="16"/>
+        
+        <Button Text="Đăng xuất" 
+                Clicked="OnLogoutClicked"
+                HeightRequest="60"
+                FontSize="16"
+                BackgroundColor="Red"
+                Margin="0,20,0,0"/>
+    </VerticalStackLayout>
+</ContentPage>
+

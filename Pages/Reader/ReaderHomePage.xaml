@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="book.Pages.Reader.ReaderHomePage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Trang chủ Thư viện">
+    <Grid RowDefinitions="Auto,Auto,Auto,*">
+        <Frame Grid.Row="0" 
+               Padding="15" 
+               BackgroundColor="#FF2196F3"
+               HasShadow="True"
+               CornerRadius="0">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <Label Text="📚 Trang chủ Thư viện" 
+                       FontSize="24" 
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       VerticalOptions="Center"/>
+                <Button Grid.Column="1" 
+                        Text="Menu" 
+                        Clicked="OnMenuClicked"
+                        BackgroundColor="#FF1976D2"
+                        TextColor="White"
+                        CornerRadius="8"
+                        WidthRequest="80"/>
+            </Grid>
+        </Frame>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="15" Padding="15,15">
+            <Button Text="📖 Sách của tôi" 
+                    Clicked="OnMyLoansClicked"
+                    BackgroundColor="#FF4CAF50"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="50"/>
+            <Button Grid.Column="1"
+                    Text="🔍 Tìm kiếm" 
+                    Clicked="OnSearchClicked"
+                    BackgroundColor="#FFFF9800"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    CornerRadius="12"
+                    HeightRequest="50"/>
+        </Grid>
+
+        <ActivityIndicator x:Name="LoadingIndicator" 
+                          Grid.Row="3"
+                          IsRunning="False" 
+                          IsVisible="False" 
+                          VerticalOptions="Center"
+                          HorizontalOptions="Center"/>
+
+        <ScrollView Grid.Row="3">
+            <VerticalStackLayout Spacing="25" Padding="15,20">
+                
+
+                <Frame Padding="15" 
+                       BackgroundColor="#FFF5F5F5"
+                       BorderColor="#FFE0E0E0"
+                       CornerRadius="10"
+                       HasShadow="False">
+                    <Label Text="✨ Sách Mới" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           TextColor="#FF424242"/>
+                </Frame>
+                <CollectionView ItemsSource="{Binding NewBooks}" HeightRequest="409">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame WidthRequest="220" 
+                                   Margin="0,5" 
+                                   Padding="0"
+                                   BackgroundColor="White"
+                                   BorderColor="#FFE0E0E0"
+                                   CornerRadius="15"
+                                   HasShadow="True">
+                                <VerticalStackLayout Spacing="0">
+                                    <Frame Padding="0" 
+                                           BackgroundColor="Transparent"
+                                           CornerRadius="15,15,0,0"
+                                           HasShadow="False">
+                                        <Image Source="{Binding CoverImageUrl}" 
+                                               Aspect="AspectFill"
+                                               HeightRequest="200"
+                                               WidthRequest="220"
+                                               BackgroundColor="LightGray"/>
+                                    </Frame>
+                                    <VerticalStackLayout Spacing="8" Padding="15">
+                                        <Label Text="{Binding Title, Converter={StaticResource TitleTruncateConverter}}" 
+                                               FontSize="16" 
+                                               FontAttributes="Bold"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="2"
+                                               TextColor="#FF212121"/>
+                                        <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='Tác giả: {0}'}" 
+                                               FontSize="12"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="2"
+                                               TextColor="#FF757575"/>
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="5" Margin="0,5">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding ManagementCode, StringFormat='Mã: {0}'}" 
+                                                   FontSize="11"
+                                                   TextColor="#FF9E9E9E"/>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding AvailableQuantity, StringFormat='Có: {0}'}" 
+                                                   FontSize="11"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{Binding AvailableQuantity, Converter={StaticResource AvailabilityColorConverter}}"
+                                                   HorizontalOptions="End"/>
+                                        </Grid>
+                                        <Button Text="Xem chi tiết" 
+                                                Clicked="OnViewDetailClicked"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#FF2196F3"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                FontAttributes="Bold"
+                                                CornerRadius="8"
+                                                HeightRequest="35"
+                                                Margin="0,5,0,0"/>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Frame Padding="15" 
+                       BackgroundColor="#FFF5F5F5"
+                       BorderColor="#FFE0E0E0"
+                       CornerRadius="10"
+                       HasShadow="False">
+                    <Label Text="👁️ Xem Nhiều Nhất" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           TextColor="#FF424242"/>
+                </Frame>
+                <CollectionView ItemsSource="{Binding MostAccessedBooks}" HeightRequest="469">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Frame WidthRequest="220" 
+                                   Margin="0,5" 
+                                   Padding="0"
+                                   BackgroundColor="White"
+                                   BorderColor="#FFE0E0E0"
+                                   CornerRadius="15"
+                                   HasShadow="True">
+                                <VerticalStackLayout Spacing="0">
+                                    <Frame Padding="0" 
+                                           BackgroundColor="Transparent"
+                                           CornerRadius="15,15,0,0"
+                                           HasShadow="False">
+                                        <Image Source="{Binding CoverImageUrl}" 
+                                               Aspect="AspectFill"
+                                               HeightRequest="200"
+                                               WidthRequest="220"
+                                               BackgroundColor="LightGray"/>
+                                    </Frame>
+                                    <VerticalStackLayout Spacing="8" Padding="15">
+                                        <Label Text="{Binding Title, Converter={StaticResource TitleTruncateConverter}}" 
+                                               FontSize="16" 
+                                               FontAttributes="Bold"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="2"
+                                               TextColor="#FF212121"/>
+                                        <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='Tác giả: {0}'}" 
+                                               FontSize="12"
+                                               LineBreakMode="WordWrap"
+                                               MaxLines="2"
+                                               TextColor="#FF757575"/>
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="5" Margin="0,5">
+                                            <Label Grid.Column="0"
+                                                   Text="{Binding ViewCount, StringFormat='👁️ {0}'}" 
+                                                   FontSize="11"
+                                                   TextColor="#FF9E9E9E"/>
+                                            <Label Grid.Column="1"
+                                                   Text="{Binding AvailableQuantity, StringFormat='Có: {0}'}" 
+                                                   FontSize="11"
+                                                   FontAttributes="Bold"
+                                                   TextColor="{Binding AvailableQuantity, Converter={StaticResource AvailabilityColorConverter}}"
+                                                   HorizontalOptions="End"/>
+                                        </Grid>
+                                        <Button Text="Xem chi tiết" 
+                                                Clicked="OnViewDetailClicked"
+                                                CommandParameter="{Binding .}"
+                                                BackgroundColor="#FF2196F3"
+                                                TextColor="White"
+                                                FontSize="13"
+                                                FontAttributes="Bold"
+                                                CornerRadius="8"
+                                                HeightRequest="35"
+                                                Margin="0,5,0,0"/>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>
+

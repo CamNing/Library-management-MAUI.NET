@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="book.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:book"
+    xmlns:pages="clr-namespace:book.Pages"
+    xmlns:admin="clr-namespace:book.Pages.Admin"
+    xmlns:reader="clr-namespace:book.Pages.Reader"
+    Title="Library Management System">
+
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate pages:LoginPage}"
+        Route="login" />
+
+    <ShellContent
+        Title="Admin Dashboard"
+        ContentTemplate="{DataTemplate admin:AdminDashboardPage}"
+        Route="admin/dashboard" />
+
+    <ShellContent
+        Title="Book Management"
+        ContentTemplate="{DataTemplate admin:BooksManagementPage}"
+        Route="admin/books" />
+
+    <ShellContent
+        Title="Borrow/Return"
+        ContentTemplate="{DataTemplate admin:BorrowReturnPage}"
+        Route="admin/borrow" />
+
+    <ShellContent
+        Title="Reader Home"
+        ContentTemplate="{DataTemplate reader:ReaderHomePage}"
+        Route="reader/home" />
+
+    <ShellContent
+        Title="My Loans"
+        ContentTemplate="{DataTemplate reader:MyLoansPage}"
+        Route="reader/loans" />
+
+</Shell>

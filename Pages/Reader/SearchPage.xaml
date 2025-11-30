@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="book.Pages.Reader.SearchPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Tìm kiếm Sách">
+    <Grid RowDefinitions="Auto,Auto,*">
+        <Frame Grid.Row="0" 
+               Padding="15" 
+               BackgroundColor="#FF2196F3"
+               HasShadow="True"
+               CornerRadius="0">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                <Button Grid.Column="0" 
+                        Text="← Quay lại" 
+                        Clicked="OnBackClicked"
+                        BackgroundColor="#FF1976D2"
+                        TextColor="White"
+                        CornerRadius="8"
+                        WidthRequest="90"/>
+                <Label Grid.Column="1" 
+                       Text="🔍 Tìm kiếm Sách" 
+                       FontSize="22" 
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"/>
+            </Grid>
+        </Frame>
+        <Frame Grid.Row="1"
+               Padding="15"
+               BackgroundColor="White"
+               BorderColor="#FFE0E0E0"
+               CornerRadius="0"
+               HasShadow="False">
+            <SearchBar x:Name="SearchBar" 
+                      Placeholder="Tìm kiếm theo tên sách, tác giả, mã sách, hoặc mô tả..."
+                      SearchCommand="{Binding SearchCommand}"
+                      TextChanged="OnSearchTextChanged"
+                      BackgroundColor="Transparent"/>
+        </Frame>
+        
+        <CollectionView x:Name="BooksCollection" 
+                       Grid.Row="2"
+                       ItemsSource="{Binding SearchResults}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="15,10" 
+                           Padding="0"
+                           BackgroundColor="White"
+                           BorderColor="#FFE0E0E0"
+                           CornerRadius="15"
+                           HasShadow="True">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBookTapped" CommandParameter="{Binding .}"/>
+                        </Frame.GestureRecognizers>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="0">
+                            <Frame Grid.Column="0"
+                                   Padding="0"
+                                   BackgroundColor="Transparent"
+                                   CornerRadius="15,0,0,15"
+                                   HasShadow="False">
+                                <Image Source="{Binding CoverImageUrl}"
+                                       Aspect="AspectFill"
+                                       WidthRequest="120"
+                                       HeightRequest="180"
+                                       BackgroundColor="LightGray"/>
+                            </Frame>
+                            <VerticalStackLayout Grid.Column="1" Spacing="8" Padding="15">
+                                <Label Text="{Binding Title}" 
+                                       FontSize="18" 
+                                       FontAttributes="Bold" 
+                                       LineBreakMode="WordWrap"
+                                       MaxLines="2"
+                                       TextColor="#FF212121"/>
+                                <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='✍️ {0}'}" 
+                                       FontSize="14" 
+                                       LineBreakMode="WordWrap"
+                                       MaxLines="2"
+                                       TextColor="#FF757575"/>
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,5">
+                                    <Label Grid.Column="0"
+                                           Text="{Binding ManagementCode, StringFormat='🏷️ {0}'}" 
+                                           FontSize="12"
+                                           TextColor="#FF9E9E9E"/>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding Category, StringFormat='📂 {0}'}" 
+                                           FontSize="12"
+                                           TextColor="#FF9E9E9E"
+                                           HorizontalOptions="End"/>
+                                </Grid>
+                                <Label Text="{Binding AvailableQuantity, StringFormat='📚 Có sẵn: {0}'}" 
+                                       FontSize="13"
+                                       FontAttributes="Bold"
+                                       TextColor="#FF4CAF50"/>
+                                <Label Text="{Binding Description}" 
+                                       FontSize="12" 
+                                       LineBreakMode="WordWrap"
+                                       MaxLines="3"
+                                       TextColor="#FF757575"
+                                       Margin="0,5,0,0"
+                                       IsVisible="{Binding Description, Converter={StaticResource StringToBoolConverter}}"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ActivityIndicator x:Name="LoadingIndicator" 
+                          Grid.Row="2"
+                          IsRunning="False" 
+                          IsVisible="False" 
+                          VerticalOptions="Center"
+                          HorizontalOptions="Center"/>
+
+        <Label x:Name="NoResultsLabel" 
+               Grid.Row="2"
+               Text="Không tìm thấy sách nào" 
+               FontSize="16"
+               IsVisible="False"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"/>
+    </Grid>
+</ContentPage>
+
