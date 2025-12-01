@@ -1,3 +1,4 @@
+using LibraryAPI.Helpers;
 using LibraryAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -109,52 +110,10 @@ namespace LibraryAPI.Data
                     PublishedYear = 1997,
                     TotalQuantity = 5,
                     AvailableQuantity = 5,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    UnsignedSearchText = StringUtils.ConvertToUnSign("Harry Potter and the Philosopher's Stone LIB-001 The first book in the Harry Potter series J.K. Rowling")
                 },
-                new Book
-                {
-                    Title = "A Game of Thrones",
-                    ManagementCode = "LIB-002",
-                    Description = "The first book in A Song of Ice and Fire series",
-                    Category = "Fantasy",
-                    PublishedYear = 1996,
-                    TotalQuantity = 3,
-                    AvailableQuantity = 3,
-                    CreatedAt = DateTime.UtcNow
-                },
-                new Book
-                {
-                    Title = "The Shining",
-                    ManagementCode = "LIB-003",
-                    Description = "A horror novel about a haunted hotel",
-                    Category = "Horror",
-                    PublishedYear = 1977,
-                    TotalQuantity = 4,
-                    AvailableQuantity = 4,
-                    CreatedAt = DateTime.UtcNow
-                },
-                new Book
-                {
-                    Title = "Murder on the Orient Express",
-                    ManagementCode = "LIB-004",
-                    Description = "A classic mystery novel",
-                    Category = "Mystery",
-                    PublishedYear = 1934,
-                    TotalQuantity = 6,
-                    AvailableQuantity = 6,
-                    CreatedAt = DateTime.UtcNow
-                },
-                new Book
-                {
-                    Title = "Foundation",
-                    ManagementCode = "LIB-005",
-                    Description = "First book in the Foundation series",
-                    Category = "Science Fiction",
-                    PublishedYear = 1951,
-                    TotalQuantity = 4,
-                    AvailableQuantity = 4,
-                    CreatedAt = DateTime.UtcNow
-                }
+                
             };
 
             context.Books.AddRange(books);
@@ -164,10 +123,7 @@ namespace LibraryAPI.Data
             var bookAuthors = new List<BookAuthor>
             {
                 new BookAuthor { BookId = books[0].Id, AuthorId = author1.Id },
-                new BookAuthor { BookId = books[1].Id, AuthorId = author2.Id },
-                new BookAuthor { BookId = books[2].Id, AuthorId = author3.Id },
-                new BookAuthor { BookId = books[3].Id, AuthorId = author4.Id },
-                new BookAuthor { BookId = books[4].Id, AuthorId = author5.Id }
+                
             };
 
             context.BookAuthors.AddRange(bookAuthors);

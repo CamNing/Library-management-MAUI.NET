@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
+using System.Text.Json.Serialization;
+
 namespace LibraryAPI.Models
 {
     public class Book
@@ -34,6 +36,8 @@ namespace LibraryAPI.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int ViewCount { get; set; } = 0; // For tracking most accessed books
+        [JsonIgnore]
+        public string? UnsignedSearchText { get; set; }
 
         // Navigation properties
         public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new List<BookAuthor>();

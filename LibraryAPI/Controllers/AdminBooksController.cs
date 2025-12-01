@@ -4,6 +4,7 @@ using LibraryAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using LibraryAPI.Helpers;
 
 namespace LibraryAPI.Controllers
 {
@@ -27,6 +28,8 @@ namespace LibraryAPI.Controllers
                 return BadRequest(new { message = "Management code already exists" });
             }
 
+            var authorString = string.Join(" ", request.Authors);
+            var rawSearchText = $"{request.Title} {request.ManagementCode} {request.Description} {authorString}";
             var book = new Book
             {
                 Title = request.Title,
@@ -37,8 +40,10 @@ namespace LibraryAPI.Controllers
                 CoverImageUrl = request.CoverImageUrl,
                 TotalQuantity = request.TotalQuantity,
                 AvailableQuantity = request.TotalQuantity,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                UnsignedSearchText = StringUtils.ConvertToUnSign(rawSearchText)
             };
+
 
             _context.Books.Add(book);
             await _context.SaveChangesAsync();
@@ -141,6 +146,8 @@ namespace LibraryAPI.Controllers
             {
                 return BadRequest(new { message = "Management code already exists" });
             }
+            var authorString = string.Join(" ", request.Authors);
+            var rawSearchText = $"{request.Title} {request.ManagementCode} {request.Description} {authorString}";
 
             // Update book properties
             book.Title = request.Title;
@@ -149,7 +156,8 @@ namespace LibraryAPI.Controllers
             book.Category = request.Category;
             book.PublishedYear = request.PublishedYear;
             book.CoverImageUrl = request.CoverImageUrl;
-            
+            book.UnsignedSearchText = StringUtils.ConvertToUnSign(rawSearchText);
+
             // Adjust available quantity if total quantity changed
             var quantityDiff = request.TotalQuantity - book.TotalQuantity;
             book.TotalQuantity = request.TotalQuantity;

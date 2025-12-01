@@ -2,6 +2,7 @@ using book.Models;
 using book.Services;
 using Microsoft.Maui.ApplicationModel;
 using System.Text.Json;
+using Microsoft.Maui.Media;
 
 namespace book.Pages.Reader
 {
@@ -10,6 +11,7 @@ namespace book.Pages.Reader
         private readonly ApiService _apiService;
         private Book? _book;
         private int? _bookId;
+        private CancellationTokenSource? _cts;
 
         public BookDetailPage(ApiService apiService)
         {
@@ -239,6 +241,17 @@ namespace book.Pages.Reader
                 DescriptionLabel.Text = _book.Description ?? "No description available";
                 DescriptionLabel.IsVisible = !string.IsNullOrWhiteSpace(_book.Description);
             }
+            if (DescriptionLabel != null)
+            {
+                DescriptionLabel.Text = _book.Description ?? "No description available";
+                DescriptionLabel.IsVisible = !string.IsNullOrWhiteSpace(_book.Description);
+
+                // CẬP NHẬT THÊM: Ẩn nút đọc nếu không có mô tả
+                if (ReadDescriptionButton != null)
+                {
+                    ReadDescriptionButton.IsVisible = !string.IsNullOrWhiteSpace(_book.Description);
+                }
+            }
 
             // Hiển thị ảnh bìa sách
             if (CoverImage != null)
@@ -269,7 +282,70 @@ namespace book.Pages.Reader
                 }
             }
         }
+        private async void OnReadDescriptionClicked(object sender, EventArgs e)
+        {
+            if (_book == null || string.IsNullOrWhiteSpace(_book.Description))
+            {
+                await DisplayAlertAsync("Thông báo", "Không có nội dung mô tả để đọc.", "OK");
+                return;
+            }
 
+            // Nếu đang đọc thì bấm vào sẽ dừng lại
+            if (_cts != null && !_cts.IsCancellationRequested)
+            {
+                _cts.Cancel();
+                _cts = null;
+                ReadDescriptionButton.Text = "🔊 Đọc";
+                return;
+            }
+
+            // Bắt đầu đọc
+            _cts = new CancellationTokenSource();
+            ReadDescriptionButton.Text = "⏹️ Dừng";
+
+            try
+            {
+                // 1. Lấy danh sách các ngôn ngữ hỗ trợ trên thiết bị
+                var locales = await TextToSpeech.Default.GetLocalesAsync();
+
+                // 2. Tìm ngôn ngữ Tiếng Việt (mã là "vi")
+                var vnLocale = locales.FirstOrDefault(l => l.Language == "vi");
+
+                // 3. Cấu hình đọc
+                var settings = new SpeechOptions()
+                {
+                    Volume = 1.0f,
+                    Pitch = 1.0f,
+                    Locale = vnLocale // Gán ngôn ngữ tiếng Việt vào đây
+                };
+
+                
+
+                // 4. Gọi hàm đọc với cấu hình mới
+                await TextToSpeech.Default.SpeakAsync(_book.Description, settings, _cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                // Đã bấm hủy, không làm gì cả
+            }
+            catch (Exception ex)
+            {
+                await DisplayAlertAsync("Lỗi", $"Không thể đọc: {ex.Message}", "OK");
+            }
+            finally
+            {
+                ReadDescriptionButton.Text = "🔊 Đọc";
+                _cts = null;
+            }
+        }
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            if (_cts != null && !_cts.IsCancellationRequested)
+            {
+                _cts.Cancel();
+            }
+        }
         private async void OnRequestBorrowClicked(object sender, EventArgs e)
         {
             // Check if button is enabled
