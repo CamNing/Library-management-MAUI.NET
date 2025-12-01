@@ -69,5 +69,10 @@
 		<EmbeddedResource Remove="LibraryAPI\**" />
 		<None Remove="LibraryAPI\**" />
 	</ItemGroup>
+	<ItemGroup>
+	  <MauiXaml Update="Pages\Reader\ChatPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
 
 </Project>

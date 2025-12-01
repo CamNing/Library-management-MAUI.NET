@@ -111,7 +111,7 @@ namespace LibraryAPI.Data
                     TotalQuantity = 5,
                     AvailableQuantity = 5,
                     CreatedAt = DateTime.UtcNow,
-                    UnsignedSearchText = StringUtils.ConvertToUnSign("Harry Potter and the Philosopher's Stone LIB-001 The first book in the Harry Potter series J.K. Rowling")
+                   UnsignedSearchText = StringUtils.ConvertToUnSign("Harry Potter and the Philosopher's Stone LIB-001 The first book in the Harry Potter series J.K. Rowling")
                 },
                 
             };

@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using book.Models;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -57,6 +58,17 @@ namespace book.Services
             {
                 _httpClient.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer", token);
+            }
+        }
+        public async Task<ChatResponse?> ChatWithAiAsync(string message)
+        {
+            try
+            {
+                return await PostAsync<ChatRequest, ChatResponse>("ai/chat", new ChatRequest { Message = message });
+            }
+            catch
+            {
+                return new ChatResponse { Response = "Xin lỗi, tôi đang gặp sự cố kết nối." };
             }
         }
 

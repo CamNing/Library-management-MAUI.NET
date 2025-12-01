@@ -39,7 +39,9 @@ namespace book
             builder.Services.AddTransient<Pages.Reader.SearchPage>();
             builder.Services.AddTransient<Pages.Reader.MyLoansPage>();
             builder.Services.AddTransient<Pages.Reader.BookDetailPage>();
-
+            
+            builder.Services.AddSingleton<ChatService>();
+            builder.Services.AddTransient<Pages.Reader.ChatPage>();
             return builder.Build();
         }
     }

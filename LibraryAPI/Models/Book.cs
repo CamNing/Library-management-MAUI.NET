@@ -39,6 +39,8 @@ namespace LibraryAPI.Models
         [JsonIgnore]
         public string? UnsignedSearchText { get; set; }
 
+
+
         // Navigation properties
         public virtual ICollection<BookAuthor> BookAuthors { get; set; } = new List<BookAuthor>();
         public virtual ICollection<LoanItem> LoanItems { get; set; } = new List<LoanItem>();

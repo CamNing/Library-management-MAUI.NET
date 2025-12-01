@@ -8,6 +8,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -89,6 +90,7 @@ builder.Services.AddCors(options =>
 // Services
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<LibraryAiService>();
 
 var app = builder.Build();
 

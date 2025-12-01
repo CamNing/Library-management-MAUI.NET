@@ -37,9 +37,10 @@ namespace LibraryAPI.Controllers
                 var searchUnsigned = StringUtils.ConvertToUnSign(search);
 
 
+
                 // Fulltext search: tìm kiếm trong Title, ManagementCode, Description, và Authors
                 // Hỗ trợ tìm kiếm nhiều từ khóa (OR logic - bất kỳ từ khóa nào match)
-               
+                
                 var searchTerms = searchUnsigned
                     .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                     .ToList();
@@ -50,6 +51,7 @@ namespace LibraryAPI.Controllers
                         query = query.Where(b => b.UnsignedSearchText != null &&
                                                  b.UnsignedSearchText.Contains(term));
                     }
+
                     // Nếu có nhiều từ khóa, tìm sách có bất kỳ từ khóa nào match
                     query = query.Where(b =>
                         searchTerms.Any(term =>

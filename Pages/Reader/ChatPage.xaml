@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="book.Pages.Reader.ChatPage"
+             Title="Trợ lý ảo Thư viện"
+             BackgroundColor="#F5F5F5">
+
+    <Grid RowDefinitions="*,Auto">
+        <CollectionView x:Name="MessagesCollection" 
+                        Grid.Row="0" 
+                        Margin="10">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="5">
+                        <VerticalStackLayout HorizontalOptions="Start" 
+                                           MaximumWidthRequest="300"
+                                           IsVisible="{Binding IsBot}">
+
+                            <Frame BackgroundColor="White" 
+                                   CornerRadius="15" 
+                                   Padding="10" 
+                                   BorderColor="Transparent">
+                                <Label Text="{Binding Text}" TextColor="Black" />
+                            </Frame>
+
+                            <Frame Margin="0,10,0,0"
+                                   Padding="10"
+                                   BackgroundColor="#E3F2FD"
+                                   CornerRadius="10"
+                                   BorderColor="#2196F3"
+                                   IsVisible="{Binding HasSuggestion}">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="📖 Có phải bạn tìm cuốn này?" 
+                                           FontSize="12" TextColor="#1565C0" FontAttributes="Bold"/>
+
+                                    <Label Text="{Binding SuggestedBook.Title}" 
+                                           TextColor="Black" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
+
+                                    <Button Text="Xem chi tiết →"
+                                            Clicked="OnViewBookDetailClicked"
+                                            CommandParameter="{Binding SuggestedBook}"
+                                            BackgroundColor="#2196F3"
+                                            TextColor="White"
+                                            HeightRequest="35"
+                                            FontSize="12"
+                                            CornerRadius="15"
+                                            HorizontalOptions="Start"/>
+                                </VerticalStackLayout>
+                            </Frame>
+                        </VerticalStackLayout>
+
+                        <Frame BackgroundColor="#512BD4" 
+                               CornerRadius="15" 
+                               Padding="10" 
+                               HorizontalOptions="End" 
+                               MaximumWidthRequest="300"
+                               BorderColor="Transparent"
+                               IsVisible="{Binding IsUser}">
+                            <Label Text="{Binding Text}" TextColor="White" />
+                        </Frame>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="10" BackgroundColor="White">
+            <Frame Grid.Column="0" CornerRadius="20" Padding="0" BorderColor="#E0E0E0" HasShadow="False">
+                <Entry x:Name="MessageEntry" 
+                       Placeholder="Ví dụ: Tìm sách Harry Potter..." 
+                       ReturnCommand="{Binding SendCommand}"
+                       Margin="15,0"/>
+            </Frame>
+            <Button Text="➤" 
+                    Clicked="OnSendClicked" 
+                    Grid.Column="1" 
+                    BackgroundColor="#512BD4"
+                    TextColor="White"
+                    CornerRadius="25"
+                    WidthRequest="50"
+                    HeightRequest="50"
+                    Margin="5,0,0,0"/>
+        </Grid>
+    </Grid>
+</ContentPage>

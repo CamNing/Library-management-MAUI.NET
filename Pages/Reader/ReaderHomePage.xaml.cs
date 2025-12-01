@@ -127,7 +127,12 @@ namespace book.Pages.Reader
         {
             await Shell.Current.GoToAsync("reader/search");
         }
-
+        private async void OnChatBubbleClicked(object sender, EventArgs e)
+        {
+            // Điều hướng đến trang chat
+            // Đảm bảo bạn đã đăng ký ChatPage trong MauiProgram.cs và AppShell.xaml.cs
+            await Navigation.PushAsync(new ChatPage(_apiService));
+        }
         private async void OnBookTapped(object sender, TappedEventArgs e)
         {
             if (e.Parameter is Book book)

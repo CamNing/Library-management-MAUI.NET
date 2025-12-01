@@ -1,4 +1,4 @@
-using LibraryAPI.Data;
+﻿using LibraryAPI.Data;
 using LibraryAPI.DTOs;
 using LibraryAPI.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -134,6 +134,7 @@ namespace LibraryAPI.Controllers
                 .Include(b => b.BookAuthors)
                     .ThenInclude(ba => ba.Author)
                 .FirstOrDefaultAsync(b => b.Id == id);
+
 
             if (book == null)
             {
