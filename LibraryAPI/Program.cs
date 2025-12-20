@@ -13,13 +13,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo 
-    { 
-        Title = "Library Management API", 
+    c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Library Management API",
         Version = "v1",
         Description = "API for Library Management System"
     });
-    
+
     // Add JWT authentication to Swagger
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
@@ -29,7 +29,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-    
+
     c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
     {
         {
@@ -116,7 +116,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<LibraryDbContext>();
-    
+
     // Check if BorrowRequests table exists
     bool tableExists = false;
     try
@@ -135,7 +135,7 @@ using (var scope = app.Services.CreateScope())
         // Other errors, assume table might exist
         tableExists = true;
     }
-    
+
     if (!tableExists)
     {
         // Table doesn't exist, recreate database
@@ -158,4 +158,3 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
-

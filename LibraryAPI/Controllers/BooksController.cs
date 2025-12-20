@@ -21,59 +21,33 @@ namespace LibraryAPI.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookDto>>> GetBooks(
-            [FromQuery] string? search,
-            [FromQuery] string? category,
-            [FromQuery] int page = 1,
-            [FromQuery] int pageSize = 20)
+     [FromQuery] string? search,
+     [FromQuery] string? category,
+     [FromQuery] int page = 1,
+     [FromQuery] int pageSize = 20)
         {
             var query = _context.Books
                 .Include(b => b.BookAuthors)
                     .ThenInclude(ba => ba.Author)
                 .AsQueryable();
 
+            // --- LOGIC TÌM KIẾM KHÔNG DẤU (FULL TEXT SEARCH) ---
             if (!string.IsNullOrWhiteSpace(search))
             {
-                var searchLower = search.ToLower().Trim();
+                // 1. Chuyển từ khóa tìm kiếm sang không dấu
                 var searchUnsigned = StringUtils.ConvertToUnSign(search);
 
+                // 2. Tách từ khóa thành từng từ (ví dụ "Harry Tap 1" -> ["harry", "tap", "1"])
+                var searchTerms = searchUnsigned.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-
-                // Fulltext search: tìm kiếm trong Title, ManagementCode, Description, và Authors
-                // Hỗ trợ tìm kiếm nhiều từ khóa (OR logic - bất kỳ từ khóa nào match)
-                
-                var searchTerms = searchUnsigned
-                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
-                    .ToList();
-                if (searchTerms.Count > 0)
+                // 3. Lặp qua từng từ, yêu cầu UnsignedSearchText trong DB phải chứa TẤT CẢ các từ đó
+                foreach (var term in searchTerms)
                 {
-                    foreach (var term in searchTerms)
-                    {
-                        query = query.Where(b => b.UnsignedSearchText != null &&
-                                                 b.UnsignedSearchText.Contains(term));
-                    }
-
-                    // Nếu có nhiều từ khóa, tìm sách có bất kỳ từ khóa nào match
-                    query = query.Where(b =>
-                        searchTerms.Any(term =>
-                            b.Title.ToLower().Contains(term) ||
-                            b.ManagementCode.ToLower().Contains(term) ||
-                            (b.Description != null && b.Description.ToLower().Contains(term)) ||
-                            b.BookAuthors.Any(ba => ba.Author.Name.ToLower().Contains(term))
-                        )
-                    );
-                }
-                else
-                {
-                    // Nếu chỉ có một từ khóa, tìm trong tất cả các trường
-                    query = query.Where(b =>
-                        b.Title.ToLower().Contains(searchLower) ||
-                        b.ManagementCode.ToLower().Contains(searchLower) ||
-                        (b.Description != null && b.Description.ToLower().Contains(searchLower)) ||
-                        b.BookAuthors.Any(ba => ba.Author.Name.ToLower().Contains(searchLower))
-                    );
+                    // Lưu ý: UnsignedSearchText trong DB phải khác null
+                    query = query.Where(b => b.UnsignedSearchText != null &&
+                                             b.UnsignedSearchText.Contains(term));
                 }
             }
-
             if (!string.IsNullOrWhiteSpace(category))
             {
                 query = query.Where(b => b.Category == category);

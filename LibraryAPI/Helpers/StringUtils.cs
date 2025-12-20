@@ -1,5 +1,4 @@
-﻿// File: LibraryAPI/Helpers/StringUtils.cs
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 
 namespace LibraryAPI.Helpers
@@ -11,11 +10,16 @@ namespace LibraryAPI.Helpers
             if (string.IsNullOrEmpty(s))
                 return string.Empty;
 
-            Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
-            string temp = s.Normalize(NormalizationForm.FormD);
-            string unsigned = regex.Replace(temp, string.Empty).Replace('\u0111', 'd').Replace('\u0110', 'D');
+            // 1. Chuẩn hóa chuỗi unicode
+            s = s.Normalize(NormalizationForm.FormD);
 
-            return unsigned.ToLower().Trim();
+            // 2. Dùng Regex để loại bỏ dấu
+            Regex regex = new Regex("\\p{IsCombiningDiacriticalMarks}+");
+            string temp = regex.Replace(s, string.Empty)
+                               .Replace('\u0111', 'd').Replace('\u0110', 'D'); // Xử lý đ/Đ
+
+            // 3. Xử lý các ký tự đặc biệt nếu cần và chuyển về chữ thường
+            return temp.Normalize(NormalizationForm.FormC).ToLower().Trim();
         }
     }
 }
