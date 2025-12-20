@@ -2,219 +2,272 @@
 <ContentPage x:Class="book.Pages.Reader.ReaderHomePage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="Trang chủ Thư viện">
+             xmlns:models="clr-namespace:book.Models"
+             Title="Khám phá"
+             BackgroundColor="#F3F4F6">
 
     <Grid>
-        <Grid RowDefinitions="Auto,Auto,Auto,*" ZIndex="0">
-            <Frame Grid.Row="0" 
-                   Padding="15" 
-                   BackgroundColor="#FF2196F3"
-                   HasShadow="True"
-                   CornerRadius="0">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                    <Label Text="📚 Trang chủ Thư viện" 
-                           FontSize="24" 
-                           FontAttributes="Bold"
-                           TextColor="White"
-                           VerticalOptions="Center"/>
-                    <Button Grid.Column="1" 
-                            Text="Menu" 
-                            Clicked="OnMenuClicked"
-                            BackgroundColor="#FF1976D2"
-                            TextColor="White"
-                            CornerRadius="8"
-                            WidthRequest="80"/>
+        <BoxView IsHitTestVisible="False">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#F3F4F6" Offset="0.0" />
+                    <GradientStop Color="#EDE9FE" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto, *">
+
+            <VerticalStackLayout Grid.Row="0" Spacing="15" Padding="20,10,20,10" BackgroundColor="Transparent">
+
+                <Grid ColumnDefinitions="*, Auto">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Xin chào," FontSize="14" TextColor="#6B7280" />
+                        <Label Text="Bạn muốn đọc gì hôm nay?" FontSize="20" FontAttributes="Bold" TextColor="#1F2937" />
+                    </VerticalStackLayout>
+
+                    <Border Grid.Column="1" 
+                            StrokeShape="RoundRectangle 12" 
+                            BackgroundColor="White" 
+                            StrokeThickness="0"
+                            HeightRequest="40" 
+                            WidthRequest="40">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+                        <Label Text="⏻" 
+                       FontSize="20" 
+                       TextColor="#EF4444" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnLogoutClicked"/>
+                        </Border.GestureRecognizers>
+                    </Border>
                 </Grid>
-            </Frame>
 
-            <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="15" Padding="15,15">
-                <Button Text="📖 Sách của tôi" 
-                        Clicked="OnMyLoansClicked"
-                        BackgroundColor="#FF4CAF50"
-                        TextColor="White"
-                        FontSize="16"
-                        FontAttributes="Bold"
-                        CornerRadius="12"
-                        HeightRequest="50"/>
-                <Button Grid.Column="1"
-                        Text="🔍 Tìm kiếm" 
-                        Clicked="OnSearchClicked"
-                        BackgroundColor="#FFFF9800"
-                        TextColor="White"
-                        FontSize="16"
-                        FontAttributes="Bold"
-                        CornerRadius="12"
-                        HeightRequest="50"/>
-            </Grid>
+                <Border StrokeShape="RoundRectangle 15" 
+                        BackgroundColor="White" 
+                        StrokeThickness="0"
+                        HeightRequest="50">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                    </Border.Shadow>
+                    <Grid ColumnDefinitions="50, *" Padding="0">
+                        <Label Text="🔍" FontSize="18" VerticalOptions="Center" HorizontalOptions="Center" TextColor="#9CA3AF"/>
+                        <Label Grid.Column="1" 
+                               Text="Tìm kiếm tên sách, tác giả..." 
+                               TextColor="#9CA3AF" 
+                               VerticalOptions="Center"
+                               FontSize="14"/>
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnSearchClicked"/>
+                    </Border.GestureRecognizers>
+                </Border>
 
-            <ActivityIndicator x:Name="LoadingIndicator" 
-                              Grid.Row="3"
-                              IsRunning="False" 
-                              IsVisible="False" 
-                              VerticalOptions="Center"
-                              HorizontalOptions="Center"/>
+                <Border StrokeShape="RoundRectangle 15"
+                        BackgroundColor="#6C63FF"
+                        StrokeThickness="0"
+                        HeightRequest="60">
+                    <Border.Shadow>
+                        <Shadow Brush="#6C63FF" Opacity="0.3" Offset="0,5" Radius="10"/>
+                    </Border.Shadow>
+                    <Grid ColumnDefinitions="Auto, *, Auto" Padding="20,0">
+                        <Label Text="📚" FontSize="24" VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="15,0,0,0">
+                            <Label Text="Sách đang mượn" TextColor="White" FontAttributes="Bold" FontSize="16"/>
+                            <Label Text="Kiểm tra hạn trả và trạng thái" TextColor="#E0E7FF" FontSize="12"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="2" Text="→" TextColor="White" FontSize="24" VerticalOptions="Center"/>
+                    </Grid>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnMyLoansClicked"/>
+                    </Border.GestureRecognizers>
+                </Border>
+            </VerticalStackLayout>
 
-            <ScrollView Grid.Row="3">
-                <VerticalStackLayout Spacing="25" Padding="15,20">
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Spacing="25" Padding="0,10,0,80">
 
-                    <Frame Padding="15" 
-                           BackgroundColor="#FFF5F5F5"
-                           BorderColor="#FFE0E0E0"
-                           CornerRadius="10"
-                           HasShadow="False">
-                        <Label Text="✨ Sách Mới" 
-                               FontSize="20" 
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="✨ Mới Cập Nhật" 
+                               FontSize="18" 
                                FontAttributes="Bold" 
-                               TextColor="#FF424242"/>
-                    </Frame>
+                               TextColor="#1F2937" 
+                               Margin="20,0"/>
 
-                    <CollectionView ItemsSource="{Binding NewBooks}" HeightRequest="409">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame WidthRequest="220" 
-                                       Margin="0,5" 
-                                       Padding="0"
-                                       BackgroundColor="White"
-                                       BorderColor="#FFE0E0E0"
-                                       CornerRadius="15"
-                                       HasShadow="True">
-                                    <VerticalStackLayout Spacing="0">
-                                        <Frame Padding="0" 
-                                               BackgroundColor="Transparent"
-                                               CornerRadius="15,15,0,0"
-                                               HasShadow="False">
+                        <CollectionView ItemsSource="{Binding NewBooks}" HeightRequest="320">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <BoxView WidthRequest="5" Color="Transparent"/>
+                            </CollectionView.Header>
+                            <CollectionView.Footer>
+                                <BoxView WidthRequest="20" Color="Transparent"/>
+                            </CollectionView.Footer>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border WidthRequest="160" 
+                                            HeightRequest="290"
+                                            StrokeShape="RoundRectangle 15"
+                                            BackgroundColor="White"
+                                            StrokeThickness="0"
+                                            Margin="0,5,0,15">
+                                        <Border.Shadow>
+                                            <Shadow Brush="#000000" Opacity="0.1" Offset="0,5" Radius="10"/>
+                                        </Border.Shadow>
+
+                                        <Grid RowDefinitions="*, Auto" Padding="0">
                                             <Image Source="{Binding CoverImageUrl}" 
                                                    Aspect="AspectFill"
-                                                   HeightRequest="200"
-                                                   WidthRequest="220"
-                                                   BackgroundColor="LightGray"/>
-                                        </Frame>
-                                        <VerticalStackLayout Spacing="8" Padding="15">
-                                            <Label Text="{Binding Title, Converter={StaticResource TitleTruncateConverter}}" 
-                                                   FontSize="16" 
-                                                   FontAttributes="Bold"
-                                                   LineBreakMode="WordWrap"
-                                                   MaxLines="2"
-                                                   TextColor="#FF212121"/>
-                                            <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='Tác giả: {0}'}" 
-                                                   FontSize="12"
-                                                   LineBreakMode="WordWrap"
-                                                   MaxLines="2"
-                                                   TextColor="#FF757575"/>
-                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="5" Margin="0,5">
-                                                <Label Grid.Column="0"
-                                                       Text="{Binding ManagementCode, StringFormat='Mã: {0}'}" 
-                                                       FontSize="11"
-                                                       TextColor="#FF9E9E9E"/>
-                                                <Label Grid.Column="1"
-                                                       Text="{Binding AvailableQuantity, StringFormat='Có: {0}'}" 
-                                                       FontSize="11"
+                                                   VerticalOptions="FillAndExpand"
+                                                   BackgroundColor="#F3F4F6"/>
+
+                                            <Border BackgroundColor="#CCFFFFFF" 
+                                                    StrokeShape="RoundRectangle 8"
+                                                    HorizontalOptions="End"
+                                                    VerticalOptions="Start"
+                                                    Margin="10"
+                                                    Padding="8,4"
+                                                    StrokeThickness="0">
+                                                <Label Text="{Binding AvailableQuantity, StringFormat='Còn: {0}'}"
+                                                       FontSize="10"
                                                        FontAttributes="Bold"
-                                                       TextColor="{Binding AvailableQuantity, Converter={StaticResource AvailabilityColorConverter}}"
-                                                       HorizontalOptions="End"/>
-                                            </Grid>
-                                            <Button Text="Xem chi tiết" 
-                                                    Clicked="OnViewDetailClicked"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="#FF2196F3"
-                                                    TextColor="White"
-                                                    FontSize="13"
-                                                    FontAttributes="Bold"
-                                                    CornerRadius="8"
-                                                    HeightRequest="35"
-                                                    Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                                       TextColor="#6C63FF"/>
+                                            </Border>
 
-                    <Frame Padding="15" 
-                           BackgroundColor="#FFF5F5F5"
-                           BorderColor="#FFE0E0E0"
-                           CornerRadius="10"
-                           HasShadow="False">
-                        <Label Text="👁️ Xem Nhiều Nhất" 
-                               FontSize="20" 
-                               FontAttributes="Bold" 
-                               TextColor="#FF424242"/>
-                    </Frame>
+                                            <VerticalStackLayout Grid.Row="1" Padding="12" Spacing="4" BackgroundColor="White">
+                                                <Label Text="{Binding Title, Converter={StaticResource TitleTruncateConverter}}" 
+                                                       FontSize="14" 
+                                                       FontAttributes="Bold"
+                                                       LineBreakMode="TailTruncation"
+                                                       TextColor="#1F2937"/>
 
-                    <CollectionView ItemsSource="{Binding MostAccessedBooks}" HeightRequest="469">
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
-                        </CollectionView.ItemsLayout>
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Frame WidthRequest="220" 
-                                       Margin="0,5" 
-                                       Padding="0"
-                                       BackgroundColor="White"
-                                       BorderColor="#FFE0E0E0"
-                                       CornerRadius="15"
-                                       HasShadow="True">
-                                    <VerticalStackLayout Spacing="0">
-                                        <Frame Padding="0" 
-                                               BackgroundColor="Transparent"
-                                               CornerRadius="15,15,0,0"
-                                               HasShadow="False">
-                                            <Image Source="{Binding CoverImageUrl}" 
+                                                <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}}" 
+                                                       FontSize="11"
+                                                       TextColor="#9CA3AF"
+                                                       LineBreakMode="TailTruncation"/>
+
+                                                <Button Text="Chi tiết" 
+                                                        Clicked="OnViewDetailClicked"
+                                                        CommandParameter="{Binding .}"
+                                                        BackgroundColor="#F3F4F6"
+                                                        TextColor="#6C63FF"
+                                                        FontSize="11"
+                                                        FontAttributes="Bold"
+                                                        Padding="0"
+                                                        HeightRequest="30"
+                                                        CornerRadius="8"
+                                                        Margin="0,5,0,0"/>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="10">
+                        <Grid ColumnDefinitions="*, Auto" Margin="20,0">
+                            <Label Text="🔥 Phổ Biến Nhất" 
+                                   FontSize="18" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1F2937"/>
+                        </Grid>
+
+                        <CollectionView ItemsSource="{Binding MostAccessedBooks}" HeightRequest="140">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout Orientation="Horizontal" ItemSpacing="15"/>
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.Header>
+                                <BoxView WidthRequest="5" Color="Transparent"/>
+                            </CollectionView.Header>
+                            <CollectionView.Footer>
+                                <BoxView WidthRequest="20" Color="Transparent"/>
+                            </CollectionView.Footer>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border WidthRequest="280" 
+                                            HeightRequest="120"
+                                            StrokeShape="RoundRectangle 15"
+                                            BackgroundColor="White"
+                                            StrokeThickness="0"
+                                            Margin="0,5,0,10">
+                                        <Border.Shadow>
+                                            <Shadow Brush="#000000" Opacity="0.08" Offset="0,4" Radius="8"/>
+                                        </Border.Shadow>
+
+                                        <Grid ColumnDefinitions="90, *" Padding="0">
+                                            <Image Grid.Column="0" 
+                                                   Source="{Binding CoverImageUrl}" 
                                                    Aspect="AspectFill"
-                                                   HeightRequest="200"
-                                                   WidthRequest="220"
-                                                   BackgroundColor="LightGray"/>
-                                        </Frame>
-                                        <VerticalStackLayout Spacing="8" Padding="15">
-                                            <Label Text="{Binding Title, Converter={StaticResource TitleTruncateConverter}}" 
-                                                   FontSize="16" 
-                                                   FontAttributes="Bold"
-                                                   LineBreakMode="WordWrap"
-                                                   MaxLines="2"
-                                                   TextColor="#FF212121"/>
-                                            <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='Tác giả: {0}'}" 
-                                                   FontSize="12"
-                                                   LineBreakMode="WordWrap"
-                                                   MaxLines="2"
-                                                   TextColor="#FF757575"/>
-                                            <Grid ColumnDefinitions="*,*" ColumnSpacing="5" Margin="0,5">
-                                                <Label Grid.Column="0"
-                                                       Text="{Binding ViewCount, StringFormat='👁️ {0}'}" 
-                                                       FontSize="11"
-                                                       TextColor="#FF9E9E9E"/>
-                                                <Label Grid.Column="1"
-                                                       Text="{Binding AvailableQuantity, StringFormat='Có: {0}'}" 
-                                                       FontSize="11"
+                                                   BackgroundColor="#F3F4F6"/>
+
+                                            <VerticalStackLayout Grid.Column="1" Padding="12" Spacing="5" VerticalOptions="Center">
+                                                <Label Text="{Binding Title}" 
+                                                       FontSize="14" 
                                                        FontAttributes="Bold"
-                                                       TextColor="{Binding AvailableQuantity, Converter={StaticResource AvailabilityColorConverter}}"
-                                                       HorizontalOptions="End"/>
-                                            </Grid>
-                                            <Button Text="Xem chi tiết" 
-                                                    Clicked="OnViewDetailClicked"
-                                                    CommandParameter="{Binding .}"
-                                                    BackgroundColor="#FF2196F3"
-                                                    TextColor="White"
-                                                    FontSize="13"
-                                                    FontAttributes="Bold"
-                                                    CornerRadius="8"
-                                                    HeightRequest="35"
-                                                    Margin="0,5,0,0"/>
-                                        </VerticalStackLayout>
-                                    </VerticalStackLayout>
-                                </Frame>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                                       MaxLines="2"
+                                                       LineBreakMode="TailTruncation"
+                                                       TextColor="#1F2937"/>
+
+                                                <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}}" 
+                                                       FontSize="12"
+                                                       TextColor="#9CA3AF"
+                                                       LineBreakMode="TailTruncation"/>
+
+                                                <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
+                                                    <Label Text="{Binding ViewCount, StringFormat='👁 {0} lượt xem'}" 
+                                                           FontSize="11" 
+                                                           TextColor="#6C63FF" 
+                                                           VerticalOptions="Center"/>
+
+                                                    <Button Grid.Column="1"
+                                                            Text="Xem" 
+                                                            Clicked="OnViewDetailClicked"
+                                                            CommandParameter="{Binding .}"
+                                                            BackgroundColor="#F3F4F6"
+                                                            TextColor="#1F2937"
+                                                            FontSize="11"
+                                                            FontAttributes="Bold"
+                                                            Padding="15,0"
+                                                            HeightRequest="30"
+                                                            CornerRadius="15"/>
+                                                </Grid>
+                                            </VerticalStackLayout>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </VerticalStackLayout>
+
                 </VerticalStackLayout>
             </ScrollView>
+
+            <Grid Grid.RowSpan="2" 
+                  BackgroundColor="#80FFFFFF" 
+                  IsVisible="{Binding IsRunning, Source={x:Reference LoadingIndicator}}"
+                  ZIndex="99">
+                <ActivityIndicator x:Name="LoadingIndicator" 
+                                  IsRunning="False" 
+                                  IsVisible="False" 
+                                  Color="#6C63FF"
+                                  WidthRequest="50"
+                                  HeightRequest="50"
+                                  VerticalOptions="Center"
+                                  HorizontalOptions="Center"/>
+            </Grid>
         </Grid>
 
         <Button Text="💬"
                 Clicked="OnChatBubbleClicked"
-                BackgroundColor="#512BD4"
+                BackgroundColor="#6C63FF"
                 TextColor="White"
                 FontSize="24"
                 CornerRadius="30"
@@ -222,13 +275,11 @@
                 HeightRequest="60"
                 HorizontalOptions="End"
                 VerticalOptions="End"
-                Margin="20"
-                ZIndex="1">
+                Margin="25"
+                Padding="0"
+                ZIndex="100">
             <Button.Shadow>
-                <Shadow Brush="Black"
-                        Offset="2,2"
-                        Radius="5"
-                        Opacity="0.3"/>
+                <Shadow Brush="#6C63FF" Offset="0,4" Radius="10" Opacity="0.5"/>
             </Button.Shadow>
         </Button>
     </Grid>

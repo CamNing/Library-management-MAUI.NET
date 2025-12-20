@@ -3,373 +3,333 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:sys="clr-namespace:System;assembly=System.Runtime"
-             Title="Mượn/Trả">
-    <Grid RowDefinitions="Auto,*">
-        <Frame Grid.Row="0" 
-               Padding="15" 
-               BackgroundColor="#FF2196F3"
-               HasShadow="True"
-               CornerRadius="0">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                <Button Grid.Column="0" 
-                        Text="← Quay lại" 
-                        Clicked="OnBackClicked"
-                        BackgroundColor="#FF1976D2"
-                        TextColor="White"
-                        CornerRadius="8"
-                        WidthRequest="90"/>
-                <Label Grid.Column="1" 
-                       Text="📖 Mượn/Trả" 
-                       FontSize="22" 
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       VerticalOptions="Center"
-                       HorizontalOptions="Center"/>
-            </Grid>
-        </Frame>
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="20" Padding="20">
-                <Frame Padding="20"
-                       BackgroundColor="White"
-                       BorderColor="#FFE0E0E0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="🪪 Mã Thẻ Độc giả" 
-                               FontSize="18" 
-                               FontAttributes="Bold"
-                               TextColor="#FF424242"/>
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="CardCodeEntry" 
-                                   Placeholder="Nhập mã thẻ (ví dụ: RC001001)"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        <Label Text="💡 Ví dụ: RC001001, RC001002" 
-                               FontSize="13" 
-                               TextColor="#FF757575"
-                               Margin="0,-10,0,0"/>
-                        <Button Text="🔍 Tra cứu Độc giả" 
-                                Clicked="OnLookupReaderClicked"
-                                BackgroundColor="#FF2196F3"
-                                TextColor="White"
-                                CornerRadius="10"
-                                FontAttributes="Bold"
-                                HeightRequest="45"/>
-                    </VerticalStackLayout>
-                </Frame>
+             Title="Mượn/Trả Sách"
+             BackgroundColor="#F3F4F6">
 
-                <Frame x:Name="ReaderInfoFrame" 
-                       IsVisible="False" 
-                       Margin="0,10" 
-                       Padding="20"
-                       BackgroundColor="White"
-                       BorderColor="#FFE0E0E0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="10">
-                        <Label x:Name="ReaderInfoLabel" 
-                               FontSize="18" 
-                               FontAttributes="Bold"
-                               TextColor="#FF212121"/>
-                        <Label x:Name="ReaderEmailLabel" 
-                               FontSize="14"
-                               TextColor="#FF757575"/>
-                        <Label x:Name="ReaderPhoneLabel" 
-                               FontSize="14"
-                               TextColor="#FF757575"/>
-                    </VerticalStackLayout>
-                </Frame>
+    <Grid>
+        <BoxView InputTransparent="False">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#F3F4F6" Offset="0.0" />
+                    <GradientStop Color="#EDE9FE" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
 
-                <Frame Padding="20"
-                       BackgroundColor="White"
-                       BorderColor="#FFE0E0E0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="📚 Sách Có sẵn (Để Mượn)" 
-                               FontSize="18" 
-                               FontAttributes="Bold"
-                               TextColor="#FF424242"/>
-                        <CollectionView x:Name="BooksCollection" HeightRequest="200">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Frame Margin="5" 
-                                           Padding="15"
-                                           BackgroundColor="#FFF5F5F5"
-                                           BorderColor="#FFE0E0E0"
-                                           CornerRadius="10"
-                                           HasShadow="False">
-                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
-                                            <CheckBox Grid.Column="0" 
-                                                      IsChecked="{Binding IsSelected}" 
-                                                      VerticalOptions="Center"
-                                                      Color="#FF2196F3"/>
-                                            <VerticalStackLayout Grid.Column="1" Spacing="5">
-                                                <Label Text="{Binding Book.Title}" 
-                                                       FontSize="15" 
-                                                       FontAttributes="Bold"
-                                                       TextColor="#FF212121"/>
-                                                <Label Text="{Binding Book.ManagementCode, StringFormat='🏷️ Mã: {0}'}" 
-                                                       FontSize="13"
-                                                       TextColor="#FF757575"/>
-                                                <Label Text="{Binding Book.AvailableQuantity, StringFormat='📖 Có sẵn: {0}'}" 
-                                                       FontSize="13"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#FF4CAF50"/>
-                                            </VerticalStackLayout>
-                                        </Grid>
-                                    </Frame>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Frame>
+        <Grid RowDefinitions="Auto,*">
 
-                <Frame Padding="20"
-                       BackgroundColor="White"
-                       BorderColor="#FFE0E0E0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="📖 Sách Đang Mượn (Để Trả)" 
-                               FontSize="18" 
-                               FontAttributes="Bold"
-                               TextColor="#FF424242"/>
-                        <CollectionView x:Name="LoansCollection" HeightRequest="200">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <Frame Margin="5" 
-                                           Padding="15"
-                                           BackgroundColor="#FFF5F5F5"
-                                           BorderColor="#FFE0E0E0"
-                                           CornerRadius="10"
-                                           HasShadow="False">
-                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
-                                            <CheckBox Grid.Column="0" 
-                                                      IsChecked="{Binding IsSelected}" 
-                                                      VerticalOptions="Center"
-                                                      Color="#FF2196F3"/>
-                                            <VerticalStackLayout Grid.Column="1" Spacing="5">
-                                                <Label Text="{Binding BookTitle}" 
-                                                       FontSize="15" 
-                                                       FontAttributes="Bold"
-                                                       TextColor="#FF212121"/>
-                                                <Label Text="{Binding ManagementCode, StringFormat='🏷️ Mã: {0}'}" 
-                                                       FontSize="13"
-                                                       TextColor="#FF757575"/>
-                                                <Label Text="{Binding Status, StringFormat='📊 Trạng thái: {0}'}" 
-                                                       FontSize="13"
-                                                       FontAttributes="Bold"
-                                                       TextColor="#FF2196F3"/>
-                                            </VerticalStackLayout>
-                                        </Grid>
-                                    </Frame>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </VerticalStackLayout>
-                </Frame>
+            <VerticalStackLayout Grid.Row="0" Spacing="15" Padding="20,10,20,10">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Grid.Column="0" 
+                            StrokeShape="RoundRectangle 12" 
+                            BackgroundColor="White" 
+                            StrokeThickness="0"
+                            HeightRequest="40" 
+                            WidthRequest="40"
+                            VerticalOptions="Center">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+                        <Label Text="➜" 
+                               Rotation="180"
+                               
+                               FontSize="20" 
+                               TextColor="#1F2937" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnBackClicked"/>
+                        </Border.GestureRecognizers>
+                    </Border>
 
-                <Frame Padding="20"
-                       BackgroundColor="White"
-                       BorderColor="#FFE0E0E0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="⏰ Thời gian Mượn" 
-                               FontSize="18" 
-                               FontAttributes="Bold"
-                               TextColor="#FF424242"/>
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <VerticalStackLayout Spacing="10">
-                                <Label Text="Tùy chọn 1: Nhập số ngày" 
-                                       FontSize="14" 
-                                       FontAttributes="Bold"
-                                       TextColor="#FF424242"/>
-                                <Entry x:Name="LoanDaysEntry" 
-                                       Placeholder="Số ngày mượn (mặc định: 14)" 
-                                       Keyboard="Numeric" 
-                                       Text="14"
-                                       BackgroundColor="White"
-                                       TextColor="#FF212121"/>
-                                <Label x:Name="CalculatedDueDateLabel" 
-                                       Text="" 
-                                       FontSize="13" 
-                                       TextColor="#FF757575"
-                                       Margin="0,-5,0,0"/>
-                            </VerticalStackLayout>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <VerticalStackLayout Spacing="10">
-                                <Label Text="Tùy chọn 2: Chọn ngày hết hạn cụ thể" 
-                                       FontSize="14" 
-                                       FontAttributes="Bold"
-                                       TextColor="#FF424242"/>
-                                <DatePicker x:Name="DueDatePicker" 
-                                           MinimumDate="{Binding Source={x:Static sys:DateTime.Now}}"
-                                           TextColor="#FF212121"/>
-                                <Label Text="💡 Để trống để sử dụng số ngày" 
-                                       FontSize="12" 
-                                       TextColor="#FF757575"
-                                       Margin="0,-5,0,0"/>
-                            </VerticalStackLayout>
-                        </Frame>
+                    <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center" Margin="15,0,0,0">
+                        <Label Text="Quản trị viên" FontSize="12" TextColor="#6B7280" />
+                        <Label Text="Quản Lý Mượn/Trả" FontSize="20" FontAttributes="Bold" TextColor="#1F2937" />
                     </VerticalStackLayout>
-                </Frame>
-
-                <Button Text="📖 Mượn Sách" 
-                        Clicked="OnBorrowClicked"
-                        BackgroundColor="#FF4CAF50"
-                        TextColor="White"
-                        CornerRadius="12"
-                        FontAttributes="Bold"
-                        FontSize="16"
-                        HeightRequest="50"/>
-                
-                <Frame x:Name="VerificationFrame" 
-                       IsVisible="False" 
-                       Margin="0,10" 
-                       Padding="20"
-                       BackgroundColor="#E3F2FD"
-                       BorderColor="#FFBBDEFB"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="📧 Mã xác minh đã được gửi đến email của độc giả" 
-                               FontSize="15" 
-                               FontAttributes="Bold"
-                               TextColor="#1976D2"/>
-                        <Label Text="Vui lòng nhập mã xác minh 6 số:" 
-                               FontSize="14"
-                               TextColor="#FF424242"/>
-                        <Frame Padding="15"
-                               BackgroundColor="White"
-                               BorderColor="#FFBBDEFB"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="VerificationCodeEntry" 
-                                   Placeholder="Nhập mã 6 số (ví dụ: 123456)" 
-                                   Keyboard="Numeric"
-                                   MaxLength="6"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   HorizontalTextAlignment="Center"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        <Label x:Name="VerificationStatusLabel" 
-                               Text="" 
-                               FontSize="13"
-                               TextColor="#FF424242"
-                               Margin="0,-5,0,0"/>
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
-                            <Button Grid.Column="0" 
-                                    Text="✅ Xác nhận" 
-                                    Clicked="OnConfirmBorrowClicked"
-                                    BackgroundColor="#FF4CAF50"
-                                    TextColor="White"
-                                    CornerRadius="10"
-                                    FontAttributes="Bold"
-                                    HeightRequest="45"/>
-                            <Button Grid.Column="1" 
-                                    Text="❌ Hủy" 
-                                    Clicked="OnCancelVerificationClicked"
-                                    BackgroundColor="#FFF44336"
-                                    TextColor="White"
-                                    CornerRadius="10"
-                                    FontAttributes="Bold"
-                                    HeightRequest="45"/>
-                        </Grid>
-                    </VerticalStackLayout>
-                </Frame>
-                
-                <Button Text="📤 Trả Sách" 
-                        Clicked="OnReturnClicked"
-                        BackgroundColor="#FFFF9800"
-                        TextColor="White"
-                        CornerRadius="12"
-                        FontAttributes="Bold"
-                        FontSize="16"
-                        HeightRequest="50"/>
-                
-                <Frame x:Name="ReturnVerificationFrame" 
-                       IsVisible="False" 
-                       Margin="0,10" 
-                       Padding="20"
-                       BackgroundColor="#FFF3E0"
-                       BorderColor="#FFE0B2A0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="15">
-                        <Label Text="📧 Mã xác minh đã được gửi đến email của độc giả" 
-                               FontSize="15" 
-                               FontAttributes="Bold"
-                               TextColor="#E65100"/>
-                        <Label Text="Vui lòng nhập mã xác minh 6 số:" 
-                               FontSize="14"
-                               TextColor="#FF424242"/>
-                        <Frame Padding="15"
-                               BackgroundColor="White"
-                               BorderColor="#FFE0B2A0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="ReturnVerificationCodeEntry" 
-                                   Placeholder="Nhập mã 6 số (ví dụ: 123456)" 
-                                   Keyboard="Numeric"
-                                   MaxLength="6"
-                                   FontSize="18"
-                                   FontAttributes="Bold"
-                                   HorizontalTextAlignment="Center"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        <Label x:Name="ReturnVerificationStatusLabel" 
-                               Text="" 
-                               FontSize="13"
-                               TextColor="#FF424242"
-                               Margin="0,-5,0,0"/>
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
-                            <Button Grid.Column="0" 
-                                    Text="✅ Xác nhận" 
-                                    Clicked="OnConfirmReturnClicked"
-                                    BackgroundColor="#FF4CAF50"
-                                    TextColor="White"
-                                    CornerRadius="10"
-                                    FontAttributes="Bold"
-                                    HeightRequest="45"/>
-                            <Button Grid.Column="1" 
-                                    Text="❌ Hủy" 
-                                    Clicked="OnCancelReturnVerificationClicked"
-                                    BackgroundColor="#FFF44336"
-                                    TextColor="White"
-                                    CornerRadius="10"
-                                    FontAttributes="Bold"
-                                    HeightRequest="45"/>
-                        </Grid>
-                    </VerticalStackLayout>
-                </Frame>
-
-                <ActivityIndicator x:Name="LoadingIndicator" 
-                                  IsRunning="False" 
-                                  IsVisible="False" 
-                                  Color="#FF2196F3"
-                                  Margin="0,10"/>
+                </Grid>
             </VerticalStackLayout>
-        </ScrollView>
+
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Spacing="20" Padding="20,0,20,40">
+
+                    <Border StrokeShape="RoundRectangle 15"
+                            BackgroundColor="White"
+                            StrokeThickness="0"
+                            Padding="20">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+
+                        <VerticalStackLayout Spacing="15">
+                            <Label Text="🪪 Mã Thẻ Độc Giả" 
+                                   FontSize="16" 
+                                   FontAttributes="Bold"
+                                   TextColor="#1F2937"/>
+
+                            <Border BackgroundColor="#F9FAFB"
+                                    StrokeShape="RoundRectangle 10" 
+                                    StrokeThickness="0"
+                                    Padding="15,0" 
+                                    HeightRequest="50">
+                                <Entry x:Name="CardCodeEntry" 
+                                       Placeholder="Nhập mã thẻ (ví dụ: RC001001)"
+                                       TextColor="#1F2937"
+                                       PlaceholderColor="#9CA3AF"
+                                       FontSize="14"
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <Label Text="💡 Ví dụ: RC001001, RC001002" FontSize="12" TextColor="#9CA3AF" Margin="0,-5,0,0"/>
+
+                            <Button Text="🔍 Tra cứu Độc giả" 
+                                    Clicked="OnLookupReaderClicked"
+                                    BackgroundColor="#6C63FF"
+                                    TextColor="White"
+                                    CornerRadius="10"
+                                    FontAttributes="Bold"
+                                    HeightRequest="45">
+                                <Button.Shadow>
+                                    <Shadow Brush="#6C63FF" Opacity="0.3" Offset="0,4" Radius="10"/>
+                                </Button.Shadow>
+                            </Button>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border x:Name="ReaderInfoFrame" 
+                            IsVisible="False" 
+                            Padding="15"
+                            BackgroundColor="#EEF2FF"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 15">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="15">
+                            <Border StrokeShape="RoundRectangle 30" 
+                                    HeightRequest="60" WidthRequest="60" 
+                                    StrokeThickness="2" Stroke="White">
+                                <Image Source="user_avatar.png" Aspect="AspectFill" BackgroundColor="#C7D2FE"/>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label x:Name="ReaderInfoLabel" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#4F46E5"/>
+                                <Label x:Name="ReaderEmailLabel" FontSize="12" TextColor="#6B7280"/>
+                                <Label x:Name="ReaderPhoneLabel" FontSize="12" TextColor="#6B7280"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="15">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10"/>
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="📚 Sách Có Sẵn (Để Mượn)" FontSize="16" FontAttributes="Bold" TextColor="#1F2937"/>
+
+                            <CollectionView x:Name="BooksCollection" HeightRequest="200">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,5" Padding="10" StrokeShape="RoundRectangle 10" BackgroundColor="#F9FAFB" StrokeThickness="0">
+                                            <Grid ColumnDefinitions="30,*" ColumnSpacing="10">
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" Color="#6C63FF"/>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                    <Label Text="{Binding Book.Title}" FontAttributes="Bold" TextColor="#374151" FontSize="14"/>
+                                                    <Label Text="{Binding Book.ManagementCode, StringFormat='🏷️ Mã: {0}'}" FontSize="12" TextColor="#9CA3AF"/>
+                                                    <Label Text="{Binding Book.AvailableQuantity, StringFormat='📖 Có sẵn: {0}'}" FontSize="12" TextColor="#10B981" FontAttributes="Bold"/>
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="15">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10"/>
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="🔄 Sách Đang Mượn (Để Trả)" FontSize="16" FontAttributes="Bold" TextColor="#1F2937"/>
+
+                            <CollectionView x:Name="LoansCollection" HeightRequest="150">
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Margin="0,5" Padding="10" StrokeShape="RoundRectangle 10" BackgroundColor="#FFF7ED" StrokeThickness="0">
+                                            <Grid ColumnDefinitions="30,*" ColumnSpacing="10">
+                                                <CheckBox Grid.Column="0" IsChecked="{Binding IsSelected}" Color="#F97316"/>
+                                                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                                    <Label Text="{Binding BookTitle}" FontAttributes="Bold" TextColor="#374151" FontSize="14"/>
+                                                    <Label Text="{Binding ManagementCode, StringFormat='🏷️ Mã: {0}'}" FontSize="12" TextColor="#9CA3AF"/>
+                                                    <Label Text="{Binding Status, StringFormat='📊 Trạng thái: {0}'}" FontSize="12" TextColor="#F97316" FontAttributes="Bold"/>
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="20">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10"/>
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="15">
+                            <Label Text="⏰ Thời Gian Mượn" FontSize="16" FontAttributes="Bold" TextColor="#1F2937"/>
+
+                            <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Tùy chọn 1: Nhập số ngày" FontSize="14" FontAttributes="Bold" TextColor="#374151"/>
+                                    <Entry x:Name="LoanDaysEntry" 
+                                           Text="14" 
+                                           Placeholder="Số ngày mượn"
+                                           Keyboard="Numeric" 
+                                           TextColor="#1F2937" 
+                                           BackgroundColor="Transparent"/>
+                                    <Label x:Name="CalculatedDueDateLabel" Text="" FontSize="12" TextColor="#6C63FF"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15">
+                                <VerticalStackLayout Spacing="5">
+                                    <Label Text="Tùy chọn 2: Chọn ngày hết hạn cụ thể" FontSize="14" FontAttributes="Bold" TextColor="#374151"/>
+                                    <DatePicker x:Name="DueDatePicker" 
+                                                MinimumDate="{Binding Source={x:Static sys:DateTime.Now}}" 
+                                                TextColor="#1F2937" 
+                                                BackgroundColor="Transparent"/>
+                                    <Label Text="💡 Để trống để sử dụng số ngày" FontSize="12" TextColor="#9CA3AF"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Button Text="📖 Mượn Sách" 
+                            Clicked="OnBorrowClicked"
+                            BackgroundColor="#6C63FF"
+                            TextColor="White"
+                            CornerRadius="12"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HeightRequest="50">
+                        <Button.Shadow>
+                            <Shadow Brush="#6C63FF" Offset="0,4" Opacity="0.4" Radius="10"/>
+                        </Button.Shadow>
+                    </Button>
+
+                    <Border x:Name="VerificationFrame"
+                            IsVisible="False"
+                            StrokeShape="RoundRectangle 15"
+                            StrokeThickness="0"
+                            BackgroundColor="#EEF2FF"
+                            Padding="20"
+                            Margin="0,10">
+                        <Border.Shadow>
+                            <Shadow Brush="#6C63FF" Offset="0,5" Opacity="0.2" Radius="15"/>
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="15">
+                            <Label Text="📧 Mã xác minh đã được gửi đến email" FontSize="15" FontAttributes="Bold" TextColor="#4F46E5"/>
+                            <Label Text="Vui lòng nhập mã xác minh 6 số:" FontSize="14" TextColor="#374151"/>
+
+                            <Border Stroke="#C7D2FE" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="0" HeightRequest="50">
+                                <Entry x:Name="VerificationCodeEntry" 
+                                       Placeholder="Nhập mã 6 số (ví dụ: 123456)" 
+                                       HorizontalTextAlignment="Center"
+                                       Keyboard="Numeric" 
+                                       MaxLength="6" 
+                                       FontSize="18" 
+                                       FontAttributes="Bold"
+                                       TextColor="#1F2937"/>
+                            </Border>
+
+                            <Label x:Name="VerificationStatusLabel" Text="" FontSize="13" TextColor="#EF4444"/>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                                <Button Grid.Column="0"
+                                        Text="✅ Xác nhận" 
+                                        Clicked="OnConfirmBorrowClicked" 
+                                        BackgroundColor="#6C63FF" 
+                                        TextColor="White" 
+                                        CornerRadius="10"
+                                        FontAttributes="Bold"/>
+
+                                <Button Grid.Column="1"
+                                        Text="❌ Hủy" 
+                                        Clicked="OnCancelVerificationClicked" 
+                                        BackgroundColor="#EF4444" 
+                                        TextColor="White" 
+                                        CornerRadius="10"
+                                        FontAttributes="Bold"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Button Text="📤 Trả Sách" 
+                            Clicked="OnReturnClicked"
+                            BackgroundColor="#F97316"
+                            TextColor="White"
+                            CornerRadius="12"
+                            FontAttributes="Bold"
+                            FontSize="16"
+                            HeightRequest="50">
+                        <Button.Shadow>
+                            <Shadow Brush="#F97316" Offset="0,4" Opacity="0.4" Radius="10"/>
+                        </Button.Shadow>
+                    </Button>
+
+                    <Border x:Name="ReturnVerificationFrame"
+                            IsVisible="False"
+                            StrokeShape="RoundRectangle 15"
+                            StrokeThickness="0"
+                            BackgroundColor="#FFF7ED"
+                            Padding="20"
+                            Margin="0,10">
+                        <Border.Shadow>
+                            <Shadow Brush="#F97316" Offset="0,5" Opacity="0.2" Radius="15"/>
+                        </Border.Shadow>
+                        <VerticalStackLayout Spacing="15">
+                            <Label Text="📧 Mã xác minh đã được gửi đến email" FontSize="15" FontAttributes="Bold" TextColor="#EA580C"/>
+                            <Label Text="Vui lòng nhập mã xác minh 6 số:" FontSize="14" TextColor="#374151"/>
+
+                            <Border Stroke="#FED7AA" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="0" HeightRequest="50">
+                                <Entry x:Name="ReturnVerificationCodeEntry" 
+                                       Placeholder="Nhập mã 6 số (ví dụ: 123456)" 
+                                       HorizontalTextAlignment="Center"
+                                       Keyboard="Numeric" 
+                                       MaxLength="6" 
+                                       FontSize="18" 
+                                       FontAttributes="Bold"
+                                       TextColor="#EA580C"/>
+                            </Border>
+
+                            <Label x:Name="ReturnVerificationStatusLabel" Text="" FontSize="13" TextColor="#EF4444"/>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                                <Button Grid.Column="0"
+                                        Text="✅ Xác nhận" 
+                                        Clicked="OnConfirmReturnClicked" 
+                                        BackgroundColor="LightGreen" 
+                                        TextColor="White" 
+                                        CornerRadius="10"
+                                        FontAttributes="Bold"/>
+
+                                <Button Grid.Column="1"
+                                        Text="❌ Hủy" 
+                                        Clicked="OnCancelReturnVerificationClicked" 
+                                        BackgroundColor="#EF4444" 
+                                        TextColor="White" 
+                                        CornerRadius="10"
+                                        FontAttributes="Bold"/>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <ActivityIndicator x:Name="LoadingIndicator" 
+                                       IsRunning="False" 
+                                       IsVisible="False" 
+                                       Color="#6C63FF"
+                                       HorizontalOptions="Center"/>
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
     </Grid>
 </ContentPage>
-

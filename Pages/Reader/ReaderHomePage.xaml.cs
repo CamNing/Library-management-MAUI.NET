@@ -141,6 +141,18 @@ namespace book.Pages.Reader
                 await Shell.Current.GoToAsync("reader/book-detail");
             }
         }
+        // Thêm hàm này vào class ReaderHomePage
+        private async void OnLogoutClicked(object sender, EventArgs e)
+        {
+            // Hỏi xác nhận trước khi đăng xuất cho chuyên nghiệp
+            bool answer = await DisplayAlert("Đăng xuất", "Bạn có chắc chắn muốn đăng xuất?", "Có", "Không");
+            if (answer)
+            {
+                await _authService.LogoutAsync();
+                // Quay về trang Login
+                await Shell.Current.GoToAsync("///login");
+            }
+        }
 
         private async void OnViewDetailClicked(object sender, EventArgs e)
         {

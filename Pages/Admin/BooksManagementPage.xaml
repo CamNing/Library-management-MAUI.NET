@@ -2,111 +2,166 @@
 <ContentPage x:Class="book.Pages.Admin.BooksManagementPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="Quản lý Sách">
-    <Grid RowDefinitions="Auto,Auto,Auto,*">
-        <Frame Grid.Row="0" 
-               Padding="15" 
-               BackgroundColor="#FF2196F3"
-               HasShadow="True"
-               CornerRadius="0">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-                <Button Grid.Column="0" 
-                        Text="← Quay lại" 
-                        Clicked="OnBackClicked"
-                        BackgroundColor="#FF1976D2"
-                        TextColor="White"
-                        CornerRadius="8"
-                        WidthRequest="90"/>
-                <Label Grid.Column="1" 
-                       Text="📚 Quản lý Sách" 
-                       FontSize="22" 
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       VerticalOptions="Center"
-                       HorizontalOptions="Center"/>
-                <Button Grid.Column="2" 
-                        Text="➕ Thêm Sách" 
-                        Clicked="OnAddBookClicked"
-                        BackgroundColor="#FF4CAF50"
-                        TextColor="White"
-                        CornerRadius="8"
-                        FontAttributes="Bold"
-                        WidthRequest="110"/>
-            </Grid>
-        </Frame>
-        <Frame Grid.Row="1" 
-               Padding="15"
-               BackgroundColor="White"
-               BorderColor="#FFE0E0E0"
-               CornerRadius="0"
-               HasShadow="False">
-            <SearchBar x:Name="SearchBar" 
-                      Placeholder="🔍 Tìm kiếm sách..."
-                      SearchCommand="{Binding SearchCommand}"
-                      BackgroundColor="Transparent"/>
-        </Frame>
+             xmlns:converters="clr-namespace:book.Converters"
+             Title="Quản lý Sách"
+             BackgroundColor="#F3F4F6"
+             Shell.NavBarIsVisible="False">
 
-        <CollectionView x:Name="BooksCollection" 
-                       Grid.Row="3"
-                       ItemsSource="{Binding Books}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Margin="15,10" 
-                           Padding="20"
-                           BackgroundColor="White"
-                           BorderColor="#FFE0E0E0"
-                           CornerRadius="15"
-                           HasShadow="True">
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="15">
-                            <VerticalStackLayout Grid.Column="0" Spacing="8">
-                                <Label Text="{Binding Title}" 
-                                       FontSize="18" 
-                                       FontAttributes="Bold"
-                                       TextColor="#FF212121"/>
-                                <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='✍️ {0}'}" 
-                                       FontSize="14"
-                                       TextColor="#FF757575"/>
-                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,5">
-                                    <Label Grid.Column="0"
-                                           Text="{Binding ManagementCode, StringFormat='🏷️ {0}'}" 
-                                           FontSize="12"
-                                           TextColor="#FF9E9E9E"/>
-                                    <Label Grid.Column="1"
-                                           Text="{Binding Category, StringFormat='📂 {0}'}" 
-                                           FontSize="12"
-                                           TextColor="#FF9E9E9E"
-                                           HorizontalOptions="End"/>
+    <Grid>
+        <BoxView IsHitTestVisible="False" VerticalOptions="Start" HeightRequest="300">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#F3F4F6" Offset="0.0" />
+                    <GradientStop Color="#EDE9FE" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto, Auto, *">
+
+            <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="20,15,20,15">
+
+                <Border Grid.Column="0" 
+                        StrokeShape="RoundRectangle 12" 
+                        BackgroundColor="White" 
+                        StrokeThickness="0" 
+                        HeightRequest="40" 
+                        WidthRequest="40">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10"/>
+                    </Border.Shadow>
+                    <Label Text="➜" Rotation="180" FontSize="20" TextColor="#1F2937" 
+                           HorizontalOptions="Center" VerticalOptions="Center"/>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackClicked"/>
+                    </Border.GestureRecognizers>
+                </Border>
+
+                <Label Grid.Column="1" 
+                       Text="Quản lý kho sách" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       TextColor="#1F2937" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"/>
+
+                <Border Grid.Column="2" 
+                        StrokeShape="RoundRectangle 12" 
+                        BackgroundColor="#6C63FF" 
+                        StrokeThickness="0" 
+                        HeightRequest="40" 
+                        WidthRequest="40">
+                    <Border.Shadow>
+                        <Shadow Brush="#6C63FF" Opacity="0.3" Offset="0,4" Radius="10"/>
+                    </Border.Shadow>
+                    <Label Text="+" FontSize="28" TextColor="White" 
+                           HorizontalOptions="Center" VerticalOptions="Center" Margin="0,-2,0,0"/>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnAddBookClicked"/>
+                    </Border.GestureRecognizers>
+                </Border>
+            </Grid>
+
+           
+
+            <CollectionView x:Name="BooksCollection" 
+                            Grid.Row="2" 
+                            ItemsSource="{Binding Books}"
+                            Margin="0,0,0,0">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.Header>
+                    <BoxView HeightRequest="5" Color="Transparent"/>
+                </CollectionView.Header>
+                <CollectionView.Footer>
+                    <BoxView HeightRequest="20" Color="Transparent"/>
+                </CollectionView.Footer>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="20,0">
+                            <Border StrokeShape="RoundRectangle 15"
+                                    BackgroundColor="White"
+                                    StrokeThickness="0"
+                                    Padding="0">
+                                <Border.Shadow>
+                                    <Shadow Brush="#000000" Opacity="0.08" Offset="0,4" Radius="8"/>
+                                </Border.Shadow>
+
+                                <Grid ColumnDefinitions="100, *" HeightRequest="150">
+
+                                    <Border Grid.Column="0" 
+                                            StrokeShape="RoundRectangle 15,0,0,15" 
+                                            StrokeThickness="0" 
+                                            BackgroundColor="#F3F4F6">
+                                        <Image Source="{Binding CoverImageUrl}" 
+                                               Aspect="AspectFill"
+                                               HorizontalOptions="Fill"
+                                               VerticalOptions="Fill"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" RowDefinitions="Auto, *, Auto" Padding="15,10">
+
+                                        <VerticalStackLayout Grid.Row="0" Spacing="2">
+                                            <Label Text="{Binding Title}" 
+                                                   FontSize="16" 
+                                                   FontAttributes="Bold" 
+                                                   TextColor="#1F2937" 
+                                                   MaxLines="2" 
+                                                   LineBreakMode="TailTruncation"/>
+                                            <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}}" 
+                                                   FontSize="12" 
+                                                   TextColor="#9CA3AF" 
+                                                   LineBreakMode="TailTruncation"/>
+                                        </VerticalStackLayout>
+
+                                        <FlexLayout Grid.Row="1" Wrap="Wrap" AlignItems="Center" AlignContent="Center" Margin="0,5,0,0">
+                                            <Border BackgroundColor="#F3F4F6" StrokeThickness="0" StrokeShape="RoundRectangle 6" Padding="8,2" Margin="0,0,5,5">
+                                                <Label Text="{Binding ManagementCode}" FontSize="10" TextColor="#4B5563" FontAttributes="Bold"/>
+                                            </Border>
+
+                                            <Border BackgroundColor="#EEF2FF" StrokeThickness="0" StrokeShape="RoundRectangle 6" Padding="8,2" Margin="0,0,5,5">
+                                                <Label Text="{Binding AvailableQuantity, StringFormat='Kho: {0}'}" 
+                                                       FontSize="10" 
+                                                       TextColor="#6C63FF" 
+                                                       FontAttributes="Bold"/>
+                                            </Border>
+                                        </FlexLayout>
+
+                                        <Grid Grid.Row="2" ColumnDefinitions="*, *" ColumnSpacing="10">
+                                            <Button Grid.Column="0" 
+                                                    Text="Sửa" 
+                                                    Clicked="OnEditBookClicked"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#FEF3C7" 
+                                                    TextColor="#D97706" 
+                                                    FontSize="12" 
+                                                    FontAttributes="Bold" 
+                                                    Padding="0" 
+                                                    HeightRequest="32" 
+                                                    CornerRadius="8"/>
+
+                                            <Button Grid.Column="1" 
+                                                    Text="Xóa" 
+                                                    Clicked="OnDeleteBookClicked"
+                                                    CommandParameter="{Binding .}"
+                                                    BackgroundColor="#FEE2E2" 
+                                                    TextColor="#DC2626" 
+                                                    FontSize="12" 
+                                                    FontAttributes="Bold" 
+                                                    Padding="0" 
+                                                    HeightRequest="32" 
+                                                    CornerRadius="8"/>
+                                        </Grid>
+                                    </Grid>
                                 </Grid>
-                                <Label Text="{Binding AvailableQuantity, StringFormat='📚 Có sẵn: {0} / {1}'}" 
-                                       FontSize="13"
-                                       FontAttributes="Bold"
-                                       TextColor="{Binding AvailableQuantity, Converter={StaticResource AvailabilityColorConverter}}"/>
-                            </VerticalStackLayout>
-                            <Button Grid.Column="1" 
-                                    Text="✏️ Sửa" 
-                                    Clicked="OnEditBookClicked"
-                                    CommandParameter="{Binding .}"
-                                    BackgroundColor="#FFFF9800"
-                                    TextColor="White"
-                                    CornerRadius="8"
-                                    FontAttributes="Bold"
-                                    WidthRequest="85"
-                                    HeightRequest="40"/>
-                            <Button Grid.Column="2" 
-                                    Text="🗑️ Xóa" 
-                                    Clicked="OnDeleteBookClicked"
-                                    CommandParameter="{Binding .}"
-                                    BackgroundColor="#FFF44336"
-                                    TextColor="White"
-                                    CornerRadius="8"
-                                    FontAttributes="Bold"
-                                    WidthRequest="85"
-                                    HeightRequest="40"/>
+                            </Border>
                         </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </Grid>
 </ContentPage>
-

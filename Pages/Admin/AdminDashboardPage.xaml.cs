@@ -58,7 +58,9 @@ namespace book.Pages.Admin
     public class MenuItem
     {
         public string Title { get; set; } = string.Empty;
+        public string Subtitle { get; set; } = string.Empty; // Thêm mô tả
         public string Icon { get; set; } = string.Empty;
+        public string CardColor { get; set; } = "#6C63FF"; // Thêm màu nền
         public ICommand Command { get; set; } = null!;
     }
 }

@@ -2,115 +2,170 @@
 <ContentPage x:Class="book.Pages.Reader.MyLoansPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="Sách của tôi">
-    <Grid RowDefinitions="Auto,*">
-        <Frame Grid.Row="0" 
-               Padding="15" 
-               BackgroundColor="#FF2196F3"
-               HasShadow="True"
-               CornerRadius="0">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-                <Button Grid.Column="0" 
-                        Text="← Quay lại" 
-                        Clicked="OnBackClicked"
-                        BackgroundColor="#FF1976D2"
-                        TextColor="White"
-                        CornerRadius="8"
-                        WidthRequest="90"/>
-                <Label Grid.Column="1" 
-                       Text="📖 Sách của tôi" 
+             xmlns:converters="clr-namespace:book.Converters"
+             Title="Sách của tôi"
+             BackgroundColor="#F3F4F6"
+             Shell.NavBarIsVisible="False">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Grid Grid.Row="0" ColumnDefinitions="Auto, *, Auto" Padding="20,15,20,15" BackgroundColor="White">
+
+            <Border StrokeShape="RoundRectangle 20" 
+                    HeightRequest="40" 
+                    WidthRequest="40" 
+                    BackgroundColor="#F3F4F6" 
+                    StrokeThickness="0"
+                    HorizontalOptions="Start">
+                <Label Text="➜" 
+                       Rotation="180"
+                       FontSize="20" 
+                       TextColor="#1F2937" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"/>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnBackClicked"/>
+                </Border.GestureRecognizers>
+            </Border>
+
+            <Label Grid.Column="1" 
+                   Text="Tủ sách của tôi" 
+                   FontSize="18" 
+                   FontAttributes="Bold" 
+                   TextColor="#1F2937"
+                   VerticalOptions="Center"
+                   HorizontalOptions="Center"/>
+
+            <Border Grid.Column="2"
+                    StrokeShape="RoundRectangle 20" 
+                    HeightRequest="40" 
+                    WidthRequest="40" 
+                    BackgroundColor="#F3F4F6" 
+                    StrokeThickness="0"
+                    HorizontalOptions="End">
+                <Label Text="⟳" 
                        FontSize="22" 
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       VerticalOptions="Center"
+                       TextColor="#6C63FF" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"/>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnRefreshClicked"/>
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <ActivityIndicator x:Name="LoadingIndicator" 
+                               IsRunning="False" 
+                               IsVisible="False" 
+                               Color="#6C63FF"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"/>
+
+            <VerticalStackLayout x:Name="EmptyLabel" 
+                                 IsVisible="False" 
+                                 VerticalOptions="Center" 
+                                 HorizontalOptions="Center" 
+                                 Spacing="15">
+                <Label Text="📚" FontSize="60" HorizontalOptions="Center" Opacity="0.5"/>
+                <Label Text="Bạn chưa mượn cuốn sách nào" 
+                       FontSize="16" 
+                       TextColor="#6B7280" 
                        HorizontalOptions="Center"/>
-                <Button Grid.Column="2" 
-                        Text="🔄 Làm mới" 
-                        Clicked="OnRefreshClicked"
-                        BackgroundColor="#FF1976D2"
-                        TextColor="White"
-                        CornerRadius="8"
-                        WidthRequest="90"/>
-            </Grid>
-        </Frame>
-        <ActivityIndicator x:Name="LoadingIndicator" 
-                          Grid.Row="1"
-                          IsRunning="False" 
-                          IsVisible="False" 
-                          VerticalOptions="Center"
-                          HorizontalOptions="Center"/>
-        <Label x:Name="EmptyLabel" 
-               Grid.Row="1"
-               Text="Không tìm thấy sách mượn nào" 
-               FontSize="16"
-               IsVisible="False"
-               VerticalOptions="Center"
-               HorizontalOptions="Center"/>
-        <CollectionView x:Name="LoansCollection" 
-                       Grid.Row="1"
-                       ItemsSource="{Binding Loans}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Margin="15,10" 
-                           Padding="0"
-                           BackgroundColor="White"
-                           BorderColor="#FFE0E0E0"
-                           CornerRadius="15"
-                           HasShadow="True">
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="0">
-                            <Frame Grid.Column="0"
-                                   Padding="0"
-                                   BackgroundColor="Transparent"
-                                   CornerRadius="15,0,0,15"
-                                   HasShadow="False">
-                                <Image Source="{Binding CoverImageUrl}"
-                                       Aspect="AspectFill"
-                                       WidthRequest="120"
-                                       HeightRequest="180"
-                                       BackgroundColor="LightGray"/>
-                            </Frame>
-                            <VerticalStackLayout Grid.Column="1" Spacing="8" Padding="15">
-                                <Label Text="{Binding Title}" 
-                                       FontSize="18" 
-                                       FontAttributes="Bold" 
-                                       LineBreakMode="WordWrap"
-                                       MaxLines="2"
-                                       TextColor="#FF212121"/>
-                                <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}, StringFormat='✍️ {0}'}" 
-                                       FontSize="14" 
-                                       LineBreakMode="WordWrap"
-                                       MaxLines="2"
-                                       TextColor="#FF757575"/>
-                                <Label Text="{Binding ManagementCode, StringFormat='🏷️ Mã: {0}'}" 
-                                       FontSize="12"
-                                       TextColor="#FF9E9E9E"/>
-                                <BoxView HeightRequest="1" 
-                                         Color="#FFE0E0E0" 
-                                         Margin="0,8"/>
-                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Margin="0,5">
-                                    <VerticalStackLayout Grid.Column="0" Spacing="3">
-                                        <Label Text="{Binding BorrowDate, StringFormat='📅 Mượn: {0:yyyy-MM-dd}'}" 
-                                               FontSize="12"
-                                               TextColor="#FF757575"/>
-                                        <Label Text="{Binding DueDate, StringFormat='⏰ Hạn: {0:yyyy-MM-dd}'}" 
-                                               FontSize="12"
-                                               FontAttributes="Bold"
-                                               TextColor="#FFFF5722"/>
-                                    </VerticalStackLayout>
-                                    <VerticalStackLayout Grid.Column="1" Spacing="3">
-                                        <Label Text="{Binding Status, StringFormat='📊 {0}'}" 
-                                               FontSize="13" 
-                                               FontAttributes="Bold"
-                                               TextColor="#FF2196F3"
-                                               HorizontalOptions="End"/>
-                                    </VerticalStackLayout>
+            </VerticalStackLayout>
+
+            <CollectionView x:Name="LoansCollection" 
+                            ItemsSource="{Binding Loans}"
+                            SelectionMode="None"
+                            Margin="0,15,0,0">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="20,0">
+                            <Border StrokeShape="RoundRectangle 20"
+                                    StrokeThickness="0"
+                                    BackgroundColor="White"
+                                    Padding="0">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Offset="0,5" Radius="15" Opacity="0.05"/>
+                                </Border.Shadow>
+
+                                <Grid ColumnDefinitions="110, *" HeightRequest="160">
+
+                                    <Border Grid.Column="0" 
+                                            StrokeShape="RoundRectangle 20,0,0,20" 
+                                            StrokeThickness="0"
+                                            BackgroundColor="#F3F4F6">
+                                        <Image Source="{Binding CoverImageUrl}" 
+                                               Aspect="AspectFill"
+                                               HorizontalOptions="Fill"
+                                               VerticalOptions="Fill"
+                                               BackgroundColor="#E5E7EB"/>
+                                    </Border>
+
+                                    <Grid Grid.Column="1" RowDefinitions="Auto, *, Auto" Padding="15,12">
+
+                                        <Grid Grid.Row="0" ColumnDefinitions="*, Auto">
+                                            <Label Text="{Binding ManagementCode, StringFormat='Mã: {0}'}" 
+                                                   FontSize="11" 
+                                                   TextColor="#9CA3AF" 
+                                                   VerticalOptions="Center"/>
+
+                                            <Border Grid.Column="1" 
+                                                    BackgroundColor="#EEF2FF" 
+                                                    StrokeThickness="0" 
+                                                    StrokeShape="RoundRectangle 6" 
+                                                    Padding="8,2">
+                                                <Label Text="{Binding Status}" 
+                                                       FontSize="10" 
+                                                       TextColor="#6C63FF" 
+                                                       FontAttributes="Bold"
+                                                       TextTransform="Uppercase"/>
+                                            </Border>
+                                        </Grid>
+
+                                        <VerticalStackLayout Grid.Row="1" Spacing="4" VerticalOptions="Center">
+                                            <Label Text="{Binding Title}" 
+                                                   FontSize="16" 
+                                                   FontAttributes="Bold" 
+                                                   TextColor="#1F2937" 
+                                                   MaxLines="2" 
+                                                   LineBreakMode="TailTruncation"/>
+
+                                            <Label Text="{Binding Authors, Converter={StaticResource AuthorsConverter}}" 
+                                                   FontSize="13" 
+                                                   TextColor="#6B7280"
+                                                   MaxLines="1" 
+                                                   LineBreakMode="TailTruncation"/>
+                                        </VerticalStackLayout>
+
+                                        <Grid Grid.Row="2" ColumnDefinitions="*, Auto, *" ColumnSpacing="10">
+
+                                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                                <Label Text="Ngày mượn" FontSize="10" TextColor="#9CA3AF"/>
+                                                <Label Text="{Binding BorrowDate, StringFormat='{0:dd/MM/yy}'}" 
+                                                       FontSize="13" FontAttributes="Bold" TextColor="#4B5563"/>
+                                            </VerticalStackLayout>
+
+                                            <BoxView Grid.Column="1" WidthRequest="1" HeightRequest="25" Color="#F3F4F6" VerticalOptions="Center"/>
+
+                                            <VerticalStackLayout Grid.Column="2" Spacing="2">
+                                                <Label Text="Hạn trả" FontSize="10" TextColor="#9CA3AF"/>
+                                                <Label Text="{Binding DueDate, StringFormat='{0:dd/MM/yy}'}" 
+                                                       FontSize="13" FontAttributes="Bold" TextColor="#EF4444"/>
+                                            </VerticalStackLayout>
+                                        </Grid>
+
+                                    </Grid>
                                 </Grid>
-                            </VerticalStackLayout>
+                            </Border>
                         </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
     </Grid>
 </ContentPage>
-

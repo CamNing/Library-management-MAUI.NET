@@ -2,60 +2,110 @@
 <ContentPage x:Class="book.Pages.Admin.AdminDashboardPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="Bảng điều khiển Admin">
-    <Grid RowDefinitions="Auto,*">
-        <Frame Grid.Row="0" 
-               Padding="15" 
-               BackgroundColor="#FF2196F3"
-               HasShadow="True"
-               CornerRadius="0">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <Label Text="Bảng điều khiển Admin" 
-                       FontSize="24" 
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       VerticalOptions="Center"/>
-                <Button Grid.Column="1" 
-                        Text="Đăng xuất" 
-                        Clicked="OnLogoutClicked"
-                        BackgroundColor="#FF1976D2"
-                        TextColor="White"
-                        CornerRadius="8"
-                        Padding="15,8"/>
-            </Grid>
-        </Frame>
+             Title="Admin Dashboard"
+             BackgroundColor="#F3F4F6"
+             Shell.NavBarIsVisible="False">
 
-        <ScrollView Grid.Row="1">
-            <CollectionView ItemsSource="{Binding MenuItems}" Margin="15,20">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="15" VerticalItemSpacing="15" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame Padding="20" 
-                               BackgroundColor="White"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="15"
-                               HasShadow="True"
-                               Margin="0">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Command}"/>
-                            </Frame.GestureRecognizers>
-                            <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
-                                <Label Text="{Binding Icon}" 
-                                       FontSize="40" 
-                                       HorizontalOptions="Center"/>
-                                <Label Text="{Binding Title}" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold"
-                                       HorizontalOptions="Center"
-                                       TextColor="#FF424242"/>
-                            </VerticalStackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </ScrollView>
+    <Grid>
+        <BoxView IsHitTestVisible="False">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#F3F4F6" Offset="0.0" />
+                    <GradientStop Color="#EDE9FE" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto, *">
+
+            <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Padding="25,20,25,10">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Xin chào, Admin" 
+                           FontSize="14" 
+                           TextColor="#6B7280" 
+                           FontAttributes="Bold"/>
+                    <Label Text="Bảng điều khiển" 
+                           FontSize="24" 
+                           FontAttributes="Bold" 
+                           TextColor="#1F2937"/>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1" 
+                        StrokeShape="RoundRectangle 12" 
+                        BackgroundColor="White" 
+                        StrokeThickness="0"
+                        HeightRequest="45" 
+                        WidthRequest="45"
+                        VerticalOptions="Center">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                    </Border.Shadow>
+
+                    <Label Text="⏻" 
+                           FontSize="22" 
+                           TextColor="#EF4444" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center"
+                           FontAttributes="Bold"/>
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnLogoutClicked"/>
+                    </Border.GestureRecognizers>
+                </Border>
+            </Grid>
+
+            <ScrollView Grid.Row="1" Padding="20,10,20,20">
+                <CollectionView ItemsSource="{Binding MenuItems}">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" 
+                                         Span="2" 
+                                         HorizontalItemSpacing="15" 
+                                         VerticalItemSpacing="15" />
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border StrokeShape="RoundRectangle 20"
+                                    BackgroundColor="White"
+                                    StrokeThickness="0"
+                                    HeightRequest="140">
+                                <Border.Shadow>
+                                    <Shadow Brush="#6C63FF" Opacity="0.08" Offset="0,5" Radius="15"/>
+                                </Border.Shadow>
+
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Command}"/>
+                                </Border.GestureRecognizers>
+
+                                <Grid RowDefinitions="*, Auto" Padding="15">
+                                    <Border Grid.Row="0"
+                                            HeightRequest="60"
+                                            WidthRequest="60"
+                                            StrokeShape="RoundRectangle 30"
+                                            BackgroundColor="#F3F4F6"
+                                            StrokeThickness="0"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center">
+                                        <Label Text="{Binding Icon}" 
+                                               FontSize="32" 
+                                               HorizontalOptions="Center" 
+                                               VerticalOptions="Center"/>
+                                    </Border>
+
+                                    <Label Grid.Row="1" 
+                                           Text="{Binding Title}" 
+                                           FontSize="15" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#1F2937"
+                                           HorizontalOptions="Center"
+                                           HorizontalTextAlignment="Center"
+                                           Margin="0,10,0,0"/>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </Grid>
     </Grid>
 </ContentPage>
-

@@ -11,7 +11,7 @@ namespace LibraryAPI.Services
     public class LibraryAiService
     {
         private readonly LibraryDbContext _context;
-        private readonly string _apiKey = "AIzaSyBoxyeUqIjgbS9TKmtUuBPnaW9KVLa7hto";
+        private readonly string _apiKey = "AIzaSyDEdM2gGg7Wf55SbHURBr5iRrq935bKc6c";
         private readonly HttpClient _httpClient;
 
         public LibraryAiService(LibraryDbContext context, IConfiguration configuration)

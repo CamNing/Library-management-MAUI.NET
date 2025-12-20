@@ -22,18 +22,47 @@ namespace book.Pages.Reader
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            
-            // Check if we have a query parameter
-            if (Shell.Current.CurrentState.Location.OriginalString.Contains("search"))
+
+            // Lấy Location hiện tại an toàn hơn
+            var location = Shell.Current.CurrentState.Location;
+
+            // Kiểm tra xem đường dẫn có chứa từ khóa search không
+            if (location.OriginalString.Contains("search"))
             {
-                var query = Shell.Current.CurrentState.Location.Query;
-                if (query.Contains("query="))
+                string query = string.Empty;
+
+                // --- FIX LỖI Ở ĐÂY ---
+                // Kiểm tra xem URI là Tuyệt đối (Absolute) hay Tương đối (Relative)
+                if (location.IsAbsoluteUri)
                 {
-                    var queryValue = Uri.UnescapeDataString(query.Split("query=")[1].Split("&")[0]);
-                    if (SearchBar != null)
+                    // Nếu là tuyệt đối, dùng thuộc tính .Query bình thường
+                    query = location.Query;
+                }
+                else
+                {
+                    // Nếu là tương đối (khi nhấn nhanh), tự cắt chuỗi để lấy phần query sau dấu ?
+                    int queryIndex = location.OriginalString.IndexOf('?');
+                    if (queryIndex >= 0)
                     {
-                        SearchBar.Text = queryValue;
-                        PerformSearch(queryValue);
+                        query = location.OriginalString.Substring(queryIndex);
+                    }
+                }
+                // ---------------------
+
+                if (!string.IsNullOrEmpty(query) && query.Contains("query="))
+                {
+                    try
+                    {
+                        var queryValue = Uri.UnescapeDataString(query.Split("query=")[1].Split("&")[0]);
+                        if (SearchBar != null)
+                        {
+                            SearchBar.Text = queryValue;
+                            PerformSearch(queryValue);
+                        }
+                    }
+                    catch
+                    {
+                        // Bỏ qua nếu lỗi parsing chuỗi
                     }
                 }
             }

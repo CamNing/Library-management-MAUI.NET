@@ -1,84 +1,148 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:book.Models"
              x:Class="book.Pages.Reader.ChatPage"
-             Title="Trợ lý ảo Thư viện"
-             BackgroundColor="#F5F5F5">
+             Title="Trợ lý ảo"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#F3F4F6">
 
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto, *, Auto">
+
+        <Grid Grid.Row="0" HeightRequest="80" VerticalOptions="Start">
+            <BoxView>
+                <BoxView.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#6C63FF" Offset="0.0" />
+                        <GradientStop Color="#4B45B2" Offset="1.0" />
+                    </LinearGradientBrush>
+                </BoxView.Background>
+            </BoxView>
+
+            <Grid ColumnDefinitions="Auto, *" Padding="15,30,15,10" VerticalOptions="Center">
+                <Border Grid.Column="0" 
+                        StrokeShape="RoundRectangle 20" 
+                        BackgroundColor="#20FFFFFF"
+                        StrokeThickness="0" 
+                        HeightRequest="40" 
+                        WidthRequest="40">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackClicked"/>
+                    </Border.GestureRecognizers>
+                    <Label Text="←" TextColor="White" FontSize="24" 
+                           HorizontalOptions="Center" VerticalOptions="Center" Margin="0,-2,0,0"/>
+                </Border>
+
+                <Label Grid.Column="1" 
+                       Text="Trợ lý AI 🤖" 
+                       TextColor="White" 
+                       FontSize="18" 
+                       FontAttributes="Bold"
+                       VerticalOptions="Center" 
+                       HorizontalOptions="Center"
+                       Margin="-40,0,0,0"/>
+            </Grid>
+        </Grid>
+
         <CollectionView x:Name="MessagesCollection" 
-                        Grid.Row="0" 
-                        Margin="10">
+                        Grid.Row="1" 
+                        ItemsSource="{Binding Messages}"
+                        Margin="0,10,0,0">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
+            </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="5">
-                        <VerticalStackLayout HorizontalOptions="Start" 
-                                           MaximumWidthRequest="300"
-                                           IsVisible="{Binding IsBot}">
+                    <Grid Padding="15,0">
+                        <VerticalStackLayout HorizontalOptions="Start" MaximumWidthRequest="280" IsVisible="{Binding IsBot}">
+                            <Border BackgroundColor="White" 
+                                    StrokeShape="RoundRectangle 0,15,15,15"
+                                    StrokeThickness="0"
+                                    Padding="15,12">
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Offset="0,2" Radius="5" Opacity="0.05"/>
+                                </Border.Shadow>
+                                <Label Text="{Binding Text}" TextColor="#1F2937" FontSize="15" LineHeight="1.2"/>
+                            </Border>
 
-                            <Frame BackgroundColor="White" 
-                                   CornerRadius="15" 
-                                   Padding="10" 
-                                   BorderColor="Transparent">
-                                <Label Text="{Binding Text}" TextColor="Black" />
-                            </Frame>
+                            <Border Margin="0,10,0,0"
+                                    Padding="0"
+                                    BackgroundColor="White"
+                                    StrokeShape="RoundRectangle 12"
+                                    StrokeThickness="1"
+                                    Stroke="#E0E7FF"
+                                    IsVisible="{Binding HasSuggestion}">
+                                <Grid RowDefinitions="Auto, Auto" Padding="12">
+                                    <Label Text="📖 Gợi ý sách:" FontSize="11" TextColor="#6C63FF" FontAttributes="Bold"/>
+                                    <Label Grid.Row="1" Text="{Binding SuggestedBook.Title}" 
+                                           TextColor="#1F2937" FontAttributes="Bold" FontSize="14" Margin="0,4,0,10"
+                                           LineBreakMode="TailTruncation"/>
 
-                            <Frame Margin="0,10,0,0"
-                                   Padding="10"
-                                   BackgroundColor="#E3F2FD"
-                                   CornerRadius="10"
-                                   BorderColor="#2196F3"
-                                   IsVisible="{Binding HasSuggestion}">
-                                <VerticalStackLayout Spacing="5">
-                                    <Label Text="📖 Có phải bạn tìm cuốn này?" 
-                                           FontSize="12" TextColor="#1565C0" FontAttributes="Bold"/>
-
-                                    <Label Text="{Binding SuggestedBook.Title}" 
-                                           TextColor="Black" FontAttributes="Bold" LineBreakMode="TailTruncation"/>
-
-                                    <Button Text="Xem chi tiết →"
+                                    <Button Grid.Row="2" Text="Xem chi tiết"
                                             Clicked="OnViewBookDetailClicked"
                                             CommandParameter="{Binding SuggestedBook}"
-                                            BackgroundColor="#2196F3"
-                                            TextColor="White"
-                                            HeightRequest="35"
+                                            BackgroundColor="#EEF2FF"
+                                            TextColor="#4F46E5"
                                             FontSize="12"
-                                            CornerRadius="15"
-                                            HorizontalOptions="Start"/>
-                                </VerticalStackLayout>
-                            </Frame>
+                                            FontAttributes="Bold"
+                                            HeightRequest="36"
+                                            CornerRadius="8"
+                                            BorderWidth="0"/>
+                                </Grid>
+                            </Border>
                         </VerticalStackLayout>
 
-                        <Frame BackgroundColor="#512BD4" 
-                               CornerRadius="15" 
-                               Padding="10" 
-                               HorizontalOptions="End" 
-                               MaximumWidthRequest="300"
-                               BorderColor="Transparent"
-                               IsVisible="{Binding IsUser}">
-                            <Label Text="{Binding Text}" TextColor="White" />
-                        </Frame>
+                        <Border BackgroundColor="#6C63FF" 
+                                StrokeShape="RoundRectangle 15,0,15,15"
+                                StrokeThickness="0"
+                                Padding="15,12"
+                                HorizontalOptions="End" 
+                                MaximumWidthRequest="280"
+                                IsVisible="{Binding IsUser}">
+                            <Border.Shadow>
+                                <Shadow Brush="#6C63FF" Offset="0,4" Radius="8" Opacity="0.2"/>
+                            </Border.Shadow>
+                            <Label Text="{Binding Text}" TextColor="White" FontSize="15" LineHeight="1.2"/>
+                        </Border>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Padding="10" BackgroundColor="White">
-            <Frame Grid.Column="0" CornerRadius="20" Padding="0" BorderColor="#E0E0E0" HasShadow="False">
-                <Entry x:Name="MessageEntry" 
-                       Placeholder="Ví dụ: Tìm sách Harry Potter..." 
-                       ReturnCommand="{Binding SendCommand}"
-                       Margin="15,0"/>
-            </Frame>
-            <Button Text="➤" 
-                    Clicked="OnSendClicked" 
-                    Grid.Column="1" 
-                    BackgroundColor="#512BD4"
-                    TextColor="White"
-                    CornerRadius="25"
-                    WidthRequest="50"
-                    HeightRequest="50"
-                    Margin="5,0,0,0"/>
-        </Grid>
+        <Border Grid.Row="2" 
+                BackgroundColor="White" 
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 25,25,0,0"
+                Padding="15,15,15,25">
+            <Border.Shadow>
+                <Shadow Brush="Black" Offset="0,-4" Radius="20" Opacity="0.05"/>
+            </Border.Shadow>
+
+            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                <Border StrokeShape="RoundRectangle 25" 
+                        BackgroundColor="#F3F4F6" 
+                        StrokeThickness="0" 
+                        HeightRequest="50">
+                    <Entry x:Name="MessageEntry" 
+                           Placeholder="Hỏi về sách, tác giả..." 
+                           PlaceholderColor="#9CA3AF"
+                           TextColor="#1F2937"
+                           ReturnCommand="{Binding SendCommand}"
+                           VerticalOptions="Center"
+                           Margin="20,0"/>
+                </Border>
+
+                <Button Grid.Column="1" 
+                        Text="➤" 
+                        Clicked="OnSendClicked" 
+                        BackgroundColor="#6C63FF"
+                        TextColor="White"
+                        CornerRadius="25"
+                        WidthRequest="50"
+                        HeightRequest="50"
+                        Padding="0"
+                        FontSize="20"/>
+            </Grid>
+        </Border>
     </Grid>
 </ContentPage>

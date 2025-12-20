@@ -95,7 +95,7 @@ builder.Services.AddScoped<LibraryAiService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -150,7 +150,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.EnsureCreatedAsync();
         await SeedData.SeedAsync(context);
     }
-    else if (context.Database.EnsureCreated())
+    //else if (context.Database.EnsureCreated())
     {
         // Database was just created, seed initial data
         await SeedData.SeedAsync(context);

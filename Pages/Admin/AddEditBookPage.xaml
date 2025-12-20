@@ -2,156 +2,187 @@
 <ContentPage x:Class="book.Pages.Admin.AddEditBookPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="Thêm/Sửa Sách">
-    <Grid RowDefinitions="Auto,*">
-        <Frame Grid.Row="0" 
-               Padding="15" 
-               BackgroundColor="#FF2196F3"
-               HasShadow="True"
-               CornerRadius="0">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
-                <Button Grid.Column="0" 
-                        Text="← Quay lại" 
-                        Clicked="OnCancelClicked"
-                        BackgroundColor="#FF1976D2"
-                        TextColor="White"
-                        CornerRadius="8"
-                        WidthRequest="90"/>
-                <Label Grid.Column="1" 
-                       x:Name="PageTitleLabel"
-                       Text="📚 Thêm Sách" 
-                       FontSize="22" 
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       VerticalOptions="Center"
-                       HorizontalOptions="Center"/>
-            </Grid>
-        </Frame>
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="20" Padding="20">
-                <Frame Padding="20"
-                       BackgroundColor="White"
-                       BorderColor="#FFE0E0E0"
-                       CornerRadius="15"
-                       HasShadow="True">
-                    <VerticalStackLayout Spacing="18">
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="TitleEntry" 
-                                   Placeholder="📖 Tiêu đề *"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="ManagementCodeEntry" 
-                                   Placeholder="🏷️ Mã quản lý *"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Editor x:Name="DescriptionEditor" 
-                                    Placeholder="📝 Mô tả" 
-                                    HeightRequest="100"
-                                    BackgroundColor="Transparent"
-                                    TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="CategoryEntry" 
-                                   Placeholder="📂 Thể loại"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="PublishedYearEntry" 
-                                   Placeholder="📅 Năm xuất bản" 
-                                   Keyboard="Numeric"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="CoverImageUrlEntry" 
-                                   Placeholder="🖼️ URL Ảnh bìa"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="TotalQuantityEntry" 
-                                   Placeholder="📚 Tổng số lượng *" 
-                                   Keyboard="Numeric" 
-                                   Text="1"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-                        
-                        <Label Text="✍️ Tác giả (phân cách bởi dấu phẩy)" 
-                               FontSize="15" 
+             Title="Thêm/Sửa Sách"
+             BackgroundColor="#F3F4F6">
+
+    <Grid>
+        <BoxView IsHitTestVisible="False">
+            <BoxView.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#F3F4F6" Offset="0.0" />
+                    <GradientStop Color="#EDE9FE" Offset="1.0" />
+                </LinearGradientBrush>
+            </BoxView.Background>
+        </BoxView>
+
+        <Grid RowDefinitions="Auto,*">
+
+            <VerticalStackLayout Grid.Row="0" Spacing="15" Padding="20,10,20,10">
+                <Grid ColumnDefinitions="Auto, *">
+                    <Border Grid.Column="0" 
+                            StrokeShape="RoundRectangle 12" 
+                            BackgroundColor="White" 
+                            StrokeThickness="0"
+                            HeightRequest="40" 
+                            WidthRequest="40"
+                            VerticalOptions="Center">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+                        <Label Text="➜" 
+       Rotation="180"
+       
+       FontSize="20" 
+       TextColor="#1F2937" 
+       HorizontalOptions="Center" 
+       VerticalOptions="Center"/>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnCancelClicked"/>
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center" Margin="15,0,0,0">
+                        <Label Text="Quản trị viên" FontSize="12" TextColor="#6B7280" />
+                        <Label x:Name="PageTitleLabel" 
+                               Text="📚 Thêm Sách" 
+                               FontSize="20" 
                                FontAttributes="Bold" 
-                               TextColor="#FF424242"
-                               Margin="0,5,0,0"/>
-                        <Frame Padding="15"
-                               BackgroundColor="#FFF5F5F5"
-                               BorderColor="#FFE0E0E0"
-                               CornerRadius="10"
-                               HasShadow="False">
-                            <Entry x:Name="AuthorsEntry" 
-                                   Placeholder="Ví dụ: Tác giả 1, Tác giả 2"
-                                   BackgroundColor="Transparent"
-                                   TextColor="#FF212121"/>
-                        </Frame>
-
-                        <ActivityIndicator x:Name="LoadingIndicator" 
-                                          IsRunning="False" 
-                                          IsVisible="False" 
-                                          Color="#FF2196F3"
-                                          Margin="0,10"/>
-
-                        <Button x:Name="SaveButton" 
-                                Text="💾 Lưu" 
-                                Clicked="OnSaveClicked"
-                                BackgroundColor="#FF4CAF50"
-                                TextColor="White"
-                                CornerRadius="12"
-                                FontAttributes="Bold"
-                                FontSize="16"
-                                HeightRequest="50"
-                                Margin="0,15,0,0"/>
+                               TextColor="#1F2937" />
                     </VerticalStackLayout>
-                </Frame>
+                </Grid>
             </VerticalStackLayout>
-        </ScrollView>
+
+            <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Spacing="20" Padding="20,0,20,40">
+
+                    <Border StrokeShape="RoundRectangle 15"
+                            BackgroundColor="White"
+                            StrokeThickness="0"
+                            Padding="20">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+
+                        <VerticalStackLayout Spacing="15">
+
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="Tiêu đề sách *" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                    <Entry x:Name="TitleEntry" 
+                                           Placeholder="Nhập tên sách..." 
+                                           TextColor="#1F2937" 
+                                           PlaceholderColor="#9CA3AF"
+                                           VerticalOptions="Center"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="Mã quản lý *" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                    <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                        <Entry x:Name="ManagementCodeEntry" 
+                                               Placeholder="VD: BK001" 
+                                               TextColor="#1F2937" 
+                                               PlaceholderColor="#9CA3AF"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                    <Label Text="Thể loại" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                    <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                        <Entry x:Name="CategoryEntry" 
+                                               Placeholder="VD: Khoa học" 
+                                               TextColor="#1F2937" 
+                                               PlaceholderColor="#9CA3AF"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="Mô tả" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,10" HeightRequest="100">
+                                    <Editor x:Name="DescriptionEditor" 
+                                            Placeholder="Nhập mô tả nội dung sách..." 
+                                            TextColor="#1F2937" 
+                                            PlaceholderColor="#9CA3AF"
+                                            AutoSize="TextChanges"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="Năm xuất bản" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                    <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                        <Entry x:Name="PublishedYearEntry" 
+                                               Placeholder="VD: 2024" 
+                                               Keyboard="Numeric"
+                                               TextColor="#1F2937" 
+                                               PlaceholderColor="#9CA3AF"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                    <Label Text="Tổng số lượng *" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                    <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                        <Entry x:Name="TotalQuantityEntry" 
+                                               Text="1" 
+                                               Keyboard="Numeric"
+                                               TextColor="#1F2937" 
+                                               PlaceholderColor="#9CA3AF"
+                                               VerticalOptions="Center"/>
+                                    </Border>
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="URL Ảnh bìa" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                    <Entry x:Name="CoverImageUrlEntry" 
+                                           Placeholder="https://example.com/image.jpg" 
+                                           TextColor="#1F2937" 
+                                           PlaceholderColor="#9CA3AF"
+                                           VerticalOptions="Center"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="5">
+                                <Label Text="Tác giả (phân cách bởi dấu phẩy)" FontSize="13" TextColor="#4B5563" FontAttributes="Bold"/>
+                                <Border BackgroundColor="#F9FAFB" StrokeShape="RoundRectangle 10" StrokeThickness="0" Padding="15,0" HeightRequest="50">
+                                    <Entry x:Name="AuthorsEntry" 
+                                           Placeholder="VD: Nguyễn Nhật Ánh, JK Rowling" 
+                                           TextColor="#1F2937" 
+                                           PlaceholderColor="#9CA3AF"
+                                           VerticalOptions="Center"/>
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <ActivityIndicator x:Name="LoadingIndicator" 
+                                               IsRunning="False" 
+                                               IsVisible="False" 
+                                               Color="#6C63FF"/>
+
+                            <Button x:Name="SaveButton" 
+                                    Text="💾 Lưu Sách" 
+                                    Clicked="OnSaveClicked"
+                                    BackgroundColor="#6C63FF"
+                                    TextColor="White"
+                                    CornerRadius="12"
+                                    FontAttributes="Bold"
+                                    FontSize="16"
+                                    HeightRequest="50"
+                                    Margin="0,10,0,0">
+                                <Button.Shadow>
+                                    <Shadow Brush="#6C63FF" Offset="0,4" Opacity="0.4" Radius="10"/>
+                                </Button.Shadow>
+                            </Button>
+
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
     </Grid>
 </ContentPage>
-
