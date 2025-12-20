@@ -11,7 +11,7 @@ namespace LibraryAPI.Services
     public class LibraryAiService
     {
         private readonly LibraryDbContext _context;
-        private readonly string _apiKey = "AIzaSyDEdM2gGg7Wf55SbHURBr5iRrq935bKc6c";
+        private readonly string _apiKey = "AIzaSyBoxyeUqIjgbS9TKmtUuBPnaW9KVLa7hto";
         private readonly HttpClient _httpClient;
 
         public LibraryAiService(LibraryDbContext context, IConfiguration configuration)
@@ -109,7 +109,7 @@ namespace LibraryAPI.Services
             }
 
             // 1. Thử dùng model chuẩn quốc tế hiện nay (Gemini 1.5 Flash trên v1beta)
-            var modelName = "gemini-2.5-pro";
+            var modelName = "gemini-2.5-flash";
             var apiVersion = "v1beta";
             var url = $"https://generativelanguage.googleapis.com/{apiVersion}/models/{modelName}:generateContent?key={_apiKey}";
 

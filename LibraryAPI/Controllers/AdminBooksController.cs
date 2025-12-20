@@ -29,7 +29,10 @@ namespace LibraryAPI.Controllers
             }
 
             var authorString = string.Join(" ", request.Authors);
-            var rawSearchText = $"{request.Title} {request.ManagementCode} {request.Description} {authorString}";
+            var rawSearchText = $"{request.Title} {request.ManagementCode} {request.Category} {request.Description} {authorString}";
+
+            // 2. Chuyển đổi sang không dấu
+            var unsignedText = StringUtils.ConvertToUnSign(rawSearchText);
             var book = new Book
             {
                 Title = request.Title,
@@ -41,7 +44,8 @@ namespace LibraryAPI.Controllers
                 TotalQuantity = request.TotalQuantity,
                 AvailableQuantity = request.TotalQuantity,
                 CreatedAt = DateTime.UtcNow,
-                UnsignedSearchText = StringUtils.ConvertToUnSign(rawSearchText)
+                UnsignedSearchText = unsignedText
+                
             };
 
 
@@ -148,7 +152,10 @@ namespace LibraryAPI.Controllers
                 return BadRequest(new { message = "Management code already exists" });
             }
             var authorString = string.Join(" ", request.Authors);
-            var rawSearchText = $"{request.Title} {request.ManagementCode} {request.Description} {authorString}";
+            var rawSearchText = $"{request.Title} {request.ManagementCode} {request.Category} {request.Description} {authorString}";
+
+            // 2. Chuyển đổi sang không dấu
+            var unsignedText = StringUtils.ConvertToUnSign(rawSearchText);
 
             // Update book properties
             book.Title = request.Title;
@@ -157,7 +164,8 @@ namespace LibraryAPI.Controllers
             book.Category = request.Category;
             book.PublishedYear = request.PublishedYear;
             book.CoverImageUrl = request.CoverImageUrl;
-            book.UnsignedSearchText = StringUtils.ConvertToUnSign(rawSearchText);
+            
+            book.UnsignedSearchText = unsignedText;
 
             // Adjust available quantity if total quantity changed
             var quantityDiff = request.TotalQuantity - book.TotalQuantity;
@@ -212,6 +220,35 @@ namespace LibraryAPI.Controllers
             };
 
             return Ok(dto);
+        }
+
+        [HttpPost("refresh-search-data")]
+        public async Task<ActionResult> RefreshSearchData()
+        {
+            // 1. Lấy tất cả sách kèm tác giả
+            var allBooks = await _context.Books
+                .Include(b => b.BookAuthors)
+                .ThenInclude(ba => ba.Author)
+                .ToListAsync();
+
+            int count = 0;
+            foreach (var book in allBooks)
+            {
+                // 2. Tạo lại chuỗi tìm kiếm từ dữ liệu hiện tại
+                var authors = book.BookAuthors.Select(ba => ba.Author.Name);
+                var authorString = string.Join(" ", authors);
+
+                var rawSearchText = $"{book.Title} {book.ManagementCode} {book.Category} {book.Description} {authorString}";
+
+                // 3. Cập nhật cột UnsignedSearchText
+                book.UnsignedSearchText = StringUtils.ConvertToUnSign(rawSearchText);
+                count++;
+            }
+
+            // 4. Lưu xuống DB
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"Đã cập nhật dữ liệu tìm kiếm cho {count} cuốn sách." });
         }
 
         [HttpDelete("{id}")]
