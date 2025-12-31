@@ -112,12 +112,12 @@ namespace book.Pages.Admin
                     EmptyLabel.IsVisible = false;
                 }
 
-                var endpoint = _currentFilter != null 
-                    ? $"admin/borrow-requests?status={_currentFilter}" 
+                var endpoint = _currentFilter != null
+                    ? $"admin/borrow-requests?status={_currentFilter}"
                     : "admin/borrow-requests";
-                
+
                 var response = await _apiService.GetAsync<JsonElement>(endpoint);
-                
+
                 Requests.Clear();
 
                 if (response.ValueKind == JsonValueKind.Array)
@@ -132,18 +132,16 @@ namespace book.Pages.Admin
                         var status = item.GetProperty("status").GetString() ?? "";
                         var dueDate = item.GetProperty("calculatedDueDate").GetDateTime();
                         var createdAt = item.GetProperty("createdAt").GetDateTime();
-                        var rejectionReason = item.TryGetProperty("rejectionReason", out var reasonElement) 
-                            ? reasonElement.GetString() 
+                        var rejectionReason = item.TryGetProperty("rejectionReason", out var reasonElement)
+                            ? reasonElement.GetString()
                             : null;
-                        
-                        // Get book titles from response (already included)
+
                         string bookTitlesText = "";
                         if (item.TryGetProperty("bookTitles", out var bookTitlesElement))
                         {
                             bookTitlesText = bookTitlesElement.GetString() ?? "";
                         }
-                        
-                        // Fallback: try to get from Books array
+
                         if (string.IsNullOrWhiteSpace(bookTitlesText) && item.TryGetProperty("books", out var booksElement))
                         {
                             var bookTitles = new List<string>();
@@ -156,21 +154,35 @@ namespace book.Pages.Admin
                             }
                             bookTitlesText = string.Join(", ", bookTitles);
                         }
-                        
-                        // Final fallback: use book IDs
+
                         if (string.IsNullOrWhiteSpace(bookTitlesText))
                         {
                             bookTitlesText = string.Join(", ", bookIds.Select(id => $"Sách ID: {id}"));
                         }
 
-                        // Map status to Vietnamese
-                        var statusText = status switch
+                        // Map status
+                        var statusText = status;
+                        Color statusColor = Colors.Gray;
+
+                        switch (status)
                         {
-                            "Pending" => "Chờ duyệt",
-                            "Approved" => "Đã duyệt",
-                            "Rejected" => "Đã từ chối",
-                            _ => status
-                        };
+                            case "Pending":
+                                statusText = "Chờ duyệt";
+                                statusColor = Colors.Orange;
+                                break;
+                            case "Approved":
+                                statusText = "Chờ lấy sách";
+                                statusColor = Color.FromArgb("#3B82F6");
+                                break;
+                            case "Rejected":
+                                statusText = "Đã từ chối/Hủy";
+                                statusColor = Colors.Red;
+                                break;
+                            case "PickedUp":
+                                statusText = "Đã lấy sách";
+                                statusColor = Colors.Green;
+                                break;
+                        }
 
                         Requests.Add(new BorrowRequestDisplay
                         {
@@ -179,12 +191,15 @@ namespace book.Pages.Admin
                             ReaderEmail = readerEmail,
                             BookTitles = bookTitlesText,
                             DueDate = dueDate,
-                            Status = statusText,
+                            Status = status,
+                            StatusText = statusText,
                             CreatedAt = createdAt,
-                            CanApprove = status == "Pending",
-                            CanReject = status == "Pending",
-                            StatusColor = status == "Pending" ? Colors.Orange : 
-                                         status == "Approved" ? Colors.Green : Colors.Red,
+
+                            // Logic hiển thị nút
+                            IsPending = status == "Pending",
+                            IsApproved = status == "Approved",
+
+                            StatusColor = statusColor,
                             RejectionReason = rejectionReason
                         });
                     }
@@ -197,7 +212,7 @@ namespace book.Pages.Admin
             }
             catch (Exception ex)
             {
-                await DisplayAlertAsync("Lỗi", $"Không thể tải danh sách yêu cầu mượn sách: {ex.Message}", "OK");
+                await DisplayAlertAsync("Lỗi", $"Không thể tải danh sách: {ex.Message}", "OK");
             }
             finally
             {
@@ -213,19 +228,18 @@ namespace book.Pages.Admin
         {
             if (sender is Button button && button.CommandParameter is BorrowRequestDisplay request)
             {
-                // Show details in alert
                 var details = $"Độc giả: {request.ReaderName}\n" +
-                             $"Email: {request.ReaderEmail}\n" +
-                             $"Sách: {request.BookTitles}\n" +
-                             $"Hạn trả: {request.DueDate:dd/MM/yyyy}\n" +
-                             $"Trạng thái: {request.Status}\n" +
-                             $"Ngày yêu cầu: {request.CreatedAt:dd/MM/yyyy HH:mm}";
-                
+                              $"Email: {request.ReaderEmail}\n" +
+                              $"Sách: {request.BookTitles}\n" +
+                              $"Hạn trả: {request.DueDate:dd/MM/yyyy}\n" +
+                              $"Trạng thái: {request.StatusText}\n" +
+                              $"Ngày yêu cầu: {request.CreatedAt:dd/MM/yyyy HH:mm}";
+
                 if (!string.IsNullOrWhiteSpace(request.RejectionReason))
                 {
-                    details += $"\nLý do từ chối: {request.RejectionReason}";
+                    details += $"\nLý do hủy/từ chối: {request.RejectionReason}";
                 }
-                
+
                 await DisplayAlertAsync("Chi tiết yêu cầu", details, "OK");
             }
         }
@@ -234,10 +248,71 @@ namespace book.Pages.Admin
         {
             if (sender is Button button && button.CommandParameter is BorrowRequestDisplay request)
             {
-                var confirm = await DisplayAlertAsync("Xác nhận", 
-                    $"Bạn có muốn duyệt yêu cầu mượn sách của {request.ReaderName}?", 
+                var confirm = await DisplayAlertAsync("Xác nhận",
+                    $"Duyệt lịch hẹn cho {request.ReaderName}?\n(Sách sẽ được giữ lại)",
                     "Có", "Không");
-                
+
+                if (!confirm) return;
+
+                try
+                {
+                    if (LoadingIndicator != null) { LoadingIndicator.IsRunning = true; LoadingIndicator.IsVisible = true; }
+
+                    await _apiService.PostAsync<object, object>($"admin/borrow-requests/{request.RequestId}/approve", new { });
+
+                    await DisplayAlertAsync("Thành công", "Đã duyệt hẹn. Email xác nhận đã được gửi.", "OK");
+                    await LoadRequestsAsync();
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlertAsync("Lỗi", $"Lỗi: {ex.Message}", "OK");
+                }
+                finally
+                {
+                    if (LoadingIndicator != null) { LoadingIndicator.IsRunning = false; LoadingIndicator.IsVisible = false; }
+                }
+            }
+        }
+
+        private async void OnRejectClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is BorrowRequestDisplay request)
+            {
+                var reason = await DisplayPromptAsync("Từ chối yêu cầu",
+                    "Nhập lý do:", "Từ chối", "Hủy", placeholder: "Lý do");
+
+                if (reason == null) return;
+
+                try
+                {
+                    if (LoadingIndicator != null) { LoadingIndicator.IsRunning = true; LoadingIndicator.IsVisible = true; }
+
+                    var rejectDto = new { reason = reason };
+                    await _apiService.PostAsync<object, object>($"admin/borrow-requests/{request.RequestId}/reject", rejectDto);
+
+                    await DisplayAlertAsync("Thành công", "Đã từ chối yêu cầu.", "OK");
+                    await LoadRequestsAsync();
+                }
+                catch (Exception ex)
+                {
+                    await DisplayAlertAsync("Lỗi", $"Lỗi: {ex.Message}", "OK");
+                }
+                finally
+                {
+                    if (LoadingIndicator != null) { LoadingIndicator.IsRunning = false; LoadingIndicator.IsVisible = false; }
+                }
+            }
+        }
+
+        private async void OnPickupClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.CommandParameter is BorrowRequestDisplay request)
+            {
+                // BƯỚC 1: HỎI XÁC NHẬN GỬI OTP
+                bool confirm = await DisplayAlert("Xác nhận lấy sách",
+                    $"Độc giả {request.ReaderName} đang nhận sách?\n\nHệ thống sẽ gửi mã OTP đến email {request.ReaderEmail} để xác minh.",
+                    "Gửi OTP", "Hủy");
+
                 if (!confirm) return;
 
                 try
@@ -248,14 +323,42 @@ namespace book.Pages.Admin
                         LoadingIndicator.IsVisible = true;
                     }
 
-                    await _apiService.PostAsync<object, object>($"admin/borrow-requests/{request.RequestId}/approve", new { });
-                    
-                    await DisplayAlertAsync("Thành công", "Yêu cầu mượn sách đã được duyệt. Email đã được gửi đến độc giả.", "OK");
-                    await LoadRequestsAsync();
+                    // Gọi API gửi OTP
+                    await _apiService.PostAsync<object, dynamic>($"admin/borrow-requests/{request.RequestId}/send-pickup-otp", new { });
+
+                    if (LoadingIndicator != null)
+                    {
+                        LoadingIndicator.IsRunning = false;
+                        LoadingIndicator.IsVisible = false;
+                    }
+
+                    // BƯỚC 2: HIỂN THỊ HỘP THOẠI NHẬP OTP
+                    string otpInput = await DisplayPromptAsync("Nhập mã OTP",
+                        $"Vui lòng nhập mã 6 số đã gửi đến {request.ReaderEmail}:",
+                        "Xác nhận", "Hủy",
+                        placeholder: "123456",
+                        maxLength: 6,
+                        keyboard: Keyboard.Numeric);
+
+                    // Nếu bấm hủy hoặc không nhập
+                    if (string.IsNullOrWhiteSpace(otpInput)) return;
+
+                    // BƯỚC 3: GỌI API XÁC NHẬN OTP
+                    if (LoadingIndicator != null)
+                    {
+                        LoadingIndicator.IsRunning = true;
+                        LoadingIndicator.IsVisible = true;
+                    }
+
+                    var payload = new { otp = otpInput };
+                    await _apiService.PostAsync<object, object>($"admin/borrow-requests/{request.RequestId}/pickup-confirm", payload);
+
+                    await DisplayAlert("Thành công", "Mã OTP chính xác!\nĐã tạo phiếu mượn thành công.", "OK");
+                    await LoadRequestsAsync(); // Tải lại danh sách
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlertAsync("Lỗi", $"Không thể duyệt yêu cầu: {ex.Message}", "OK");
+                    await DisplayAlertAsync("Lỗi", $"Xác thực thất bại: {ex.Message}", "OK");
                 }
                 finally
                 {
@@ -268,44 +371,47 @@ namespace book.Pages.Admin
             }
         }
 
-        private async void OnRejectClicked(object sender, EventArgs e)
+        // --- HÀM MỚI: HỦY HẸN (CANCEL BOOKING) ---
+        private async void OnCancelBookingClicked(object sender, EventArgs e)
         {
             if (sender is Button button && button.CommandParameter is BorrowRequestDisplay request)
             {
-                var reason = await DisplayPromptAsync("Từ chối yêu cầu", 
-                    "Nhập lý do từ chối (tùy chọn):", 
-                    "Từ chối", "Hủy", 
-                    placeholder: "Lý do từ chối");
-                
-                if (reason == null) return; // User cancelled
+                bool confirm = await DisplayAlert("Hủy lịch hẹn",
+                    $"Bạn có chắc chắn muốn hủy lịch hẹn của {request.ReaderName} không?\n\n(Sách sẽ được trả lại vào kho)",
+                    "Hủy hẹn", "Quay lại");
+
+                if (!confirm) return;
 
                 try
                 {
-                    if (LoadingIndicator != null)
-                    {
-                        LoadingIndicator.IsRunning = true;
-                        LoadingIndicator.IsVisible = true;
-                    }
+                    if (LoadingIndicator != null) { LoadingIndicator.IsRunning = true; LoadingIndicator.IsVisible = true; }
 
-                    var rejectDto = new { reason = reason };
-                    await _apiService.PostAsync<object, object>($"admin/borrow-requests/{request.RequestId}/reject", rejectDto);
-                    
-                    await DisplayAlertAsync("Thành công", "Yêu cầu mượn sách đã bị từ chối. Email đã được gửi đến độc giả.", "OK");
+                    // Gọi API hủy hẹn mới
+                    await _apiService.PostAsync<object, dynamic>($"admin/borrow-requests/{request.RequestId}/cancel-booking", new { });
+
+                    await DisplayAlert("Thành công", "Đã hủy lịch hẹn và trả sách về kho!", "OK");
                     await LoadRequestsAsync();
                 }
                 catch (Exception ex)
                 {
-                    await DisplayAlertAsync("Lỗi", $"Không thể từ chối yêu cầu: {ex.Message}", "OK");
+                    await DisplayAlertAsync("Lỗi", "Không thể hủy hẹn: " + ex.Message, "OK");
                 }
                 finally
                 {
-                    if (LoadingIndicator != null)
-                    {
-                        LoadingIndicator.IsRunning = false;
-                        LoadingIndicator.IsVisible = false;
-                    }
+                    if (LoadingIndicator != null) { LoadingIndicator.IsRunning = false; LoadingIndicator.IsVisible = false; }
                 }
             }
+        }
+
+        // Helper
+        private Task<bool> DisplayAlertAsync(string title, string message, string accept, string cancel)
+        {
+            return MainThread.InvokeOnMainThreadAsync(() => DisplayAlert(title, message, accept, cancel));
+        }
+
+        private Task DisplayAlertAsync(string title, string message, string cancel)
+        {
+            return MainThread.InvokeOnMainThreadAsync(() => DisplayAlert(title, message, cancel));
         }
     }
 
@@ -317,12 +423,14 @@ namespace book.Pages.Admin
         public string BookTitles { get; set; } = string.Empty;
         public DateTime DueDate { get; set; }
         public string Status { get; set; } = string.Empty;
+        public string StatusText { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
-        public bool CanApprove { get; set; }
-        public bool CanReject { get; set; }
+
+        public bool IsPending { get; set; }
+        public bool IsApproved { get; set; }
+
         public Color StatusColor { get; set; }
         public string? RejectionReason { get; set; }
         public bool HasRejectionReason => !string.IsNullOrWhiteSpace(RejectionReason);
     }
 }
-

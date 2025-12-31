@@ -179,7 +179,7 @@
                             </Grid>
 
                             <Button x:Name="RequestBorrowButton"
-                                    Text="Gửi Yêu cầu Ngay" 
+                                    Text="Hẹn mượn sách" 
                                     Clicked="OnRequestBorrowClicked"
                                     BackgroundColor="#6C63FF"
                                     TextColor="White"

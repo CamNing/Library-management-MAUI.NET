@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
+using book.Models;
 
 namespace book.Services
 {
@@ -10,7 +11,10 @@ namespace book.Services
         private readonly HttpClient _httpClient;
         private readonly SecureStorageService _secureStorage;
         private readonly string _baseUrl;
-
+        public async Task<DashboardAnalytics?> GetAdminDashboardStatsAsync()
+        {
+            return await GetAsync<DashboardAnalytics>("analytics/dashboard-stats");
+        }
         public ApiService(SecureStorageService secureStorage)
         {
             _secureStorage = secureStorage;
@@ -229,7 +233,10 @@ namespace book.Services
                 throw new Exception($"API call failed: {ex.Message}", ex);
             }
         }
-
+        public async Task<DetailedReport?> GetDetailedReportAsync()
+        {
+            return await GetAsync<DetailedReport>("analytics/detailed-report");
+        }
         public async Task DeleteAsync(string endpoint)
         {
             try

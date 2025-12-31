@@ -30,12 +30,11 @@
                             <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
                         </Border.Shadow>
                         <Label Text="➜" 
-       Rotation="180"
-       
-       FontSize="20" 
-       TextColor="#1F2937" 
-       HorizontalOptions="Center" 
-       VerticalOptions="Center"/>
+                               Rotation="180"
+                               FontSize="20" 
+                               TextColor="#1F2937" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"/>
                         <Border.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnBackClicked"/>
                         </Border.GestureRecognizers>
@@ -155,7 +154,7 @@
                                             StrokeThickness="0"
                                             StrokeShape="RoundRectangle 10"
                                             VerticalOptions="Start">
-                                        <Label Text="{Binding Status}" 
+                                        <Label Text="{Binding StatusText}" 
                                                FontSize="12" 
                                                FontAttributes="Bold"
                                                TextColor="{Binding StatusColor}"/>
@@ -173,7 +172,7 @@
                                            TextColor="#4B5563"/>
 
                                     <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                                        <Label Grid.Column="0" Text="{Binding DueDate, StringFormat='⏳ Hạn: {0:dd/MM/yyyy}'}" FontSize="12" TextColor="#6B7280"/>
+                                        <Label Grid.Column="0" Text="{Binding DueDate, StringFormat='⏳ Hạn trả: {0:dd/MM/yyyy}'}" FontSize="12" TextColor="#6B7280"/>
                                         <Label Grid.Column="1" Text="{Binding CreatedAt, StringFormat='📅 Tạo: {0:dd/MM}'}" FontSize="12" TextColor="#9CA3AF" HorizontalOptions="End"/>
                                     </Grid>
 
@@ -183,49 +182,78 @@
                                            IsVisible="{Binding HasRejectionReason}"/>
                                 </VerticalStackLayout>
 
-                                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="0,5,0,0">
-                                    <Button Grid.Column="0"
-                                            Text="👁️" 
+                                <HorizontalStackLayout Spacing="10" Margin="0,5,0,0" HorizontalOptions="FillAndExpand">
+
+                                    <Button Text="👁️" 
                                             Clicked="OnViewDetailsClicked"
                                             CommandParameter="{Binding .}"
                                             BackgroundColor="#EFF6FF"
                                             TextColor="#3B82F6"
                                             CornerRadius="10"
                                             HeightRequest="40"
+                                            WidthRequest="40"
                                             Padding="0"/>
 
-                                    <Button Grid.Column="1"
-                                            Text="✅ Duyệt" 
+                                    <Button Text="✅ Duyệt" 
                                             Clicked="OnApproveClicked"
                                             CommandParameter="{Binding .}"
-                                            IsEnabled="{Binding CanApprove}"
+                                            IsVisible="{Binding IsPending}"
                                             BackgroundColor="#10B981"
                                             TextColor="White"
                                             CornerRadius="10"
                                             FontAttributes="Bold"
                                             HeightRequest="40"
-                                            Padding="0">
+                                            Padding="15,0"
+                                            HorizontalOptions="FillAndExpand">
                                         <Button.Shadow>
                                             <Shadow Brush="#10B981" Opacity="0.3" Offset="0,4" Radius="8"/>
                                         </Button.Shadow>
                                     </Button>
 
-                                    <Button Grid.Column="2"
-                                            Text="❌ Từ chối" 
+                                    <Button Text="❌ Từ chối" 
                                             Clicked="OnRejectClicked"
                                             CommandParameter="{Binding .}"
-                                            IsEnabled="{Binding CanReject}"
+                                            IsVisible="{Binding IsPending}"
                                             BackgroundColor="#EF4444"
                                             TextColor="White"
                                             CornerRadius="10"
                                             FontAttributes="Bold"
                                             HeightRequest="40"
-                                            Padding="0">
+                                            Padding="15,0"
+                                            HorizontalOptions="FillAndExpand"/>
+
+                                    <Button Text="📦 ĐÃ LẤY SÁCH" 
+                                            Clicked="OnPickupClicked"
+                                            CommandParameter="{Binding .}"
+                                            IsVisible="{Binding IsApproved}"
+                                            BackgroundColor="#3B82F6"
+                                            TextColor="White"
+                                            CornerRadius="10"
+                                            FontAttributes="Bold"
+                                            HeightRequest="40"
+                                            Padding="15,0"
+                                            HorizontalOptions="FillAndExpand">
                                         <Button.Shadow>
-                                            <Shadow Brush="#EF4444" Opacity="0.3" Offset="0,4" Radius="8"/>
+                                            <Shadow Brush="#3B82F6" Opacity="0.3" Offset="0,4" Radius="8"/>
                                         </Button.Shadow>
                                     </Button>
-                                </Grid>
+
+                                    <Button Text="🚫 HỦY HẸN" 
+                                            Clicked="OnCancelBookingClicked"
+                                            CommandParameter="{Binding .}"
+                                            IsVisible="{Binding IsApproved}"
+                                            BackgroundColor="#FEF2F2"
+                                            TextColor="#EF4444"
+                                            BorderColor="#EF4444"
+                                            BorderWidth="1"
+                                            CornerRadius="10"
+                                            FontAttributes="Bold"
+                                            HeightRequest="40"
+                                            Padding="15,0"
+                                            HorizontalOptions="FillAndExpand">
+                                    </Button>
+
+                                </HorizontalStackLayout>
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>

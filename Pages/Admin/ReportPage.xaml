@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="book.Pages.Admin.ReportPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Chi tiết Báo cáo"
+             BackgroundColor="#F3F4F6"
+             Shell.NavBarIsVisible="False">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="20" Padding="20">
+
+            <Grid ColumnDefinitions="Auto, *" ColumnSpacing="15">
+                <Border Grid.Column="0" 
+                        StrokeShape="RoundRectangle 12" 
+                        BackgroundColor="White" 
+                        StrokeThickness="0"
+                        HeightRequest="45" 
+                        WidthRequest="45" 
+                        VerticalOptions="Center">
+                    <Border.Shadow>
+                        <Shadow Brush="#000000" Opacity="0.05" Offset="0,2" Radius="5"/>
+                    </Border.Shadow>
+
+                    <Label Text="←" 
+                           FontSize="24" 
+                           TextColor="#374151" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center"
+                           FontAttributes="Bold"
+                           Margin="0,0,0,2"/>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnBackClicked"/>
+                    </Border.GestureRecognizers>
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="0">
+                    <Label Text="THỐNG KÊ" FontSize="12" TextColor="#6B7280" FontAttributes="Bold"/>
+                    <Label Text="Báo cáo chi tiết" FontSize="20" FontAttributes="Bold" TextColor="#1F2937"/>
+                </VerticalStackLayout>
+            </Grid>
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="#6C63FF"/>
+
+            <VerticalStackLayout Spacing="25" IsVisible="{Binding IsNotLoading}">
+
+                <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Xu hướng mượn (6 tháng)" FontSize="16" FontAttributes="Bold" TextColor="#374151"/>
+
+                        <Grid HeightRequest="180" VerticalOptions="End">
+                            <CollectionView ItemsSource="{Binding ReportData.MonthlyStats}">
+                                <CollectionView.ItemsLayout>
+                                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="20"/>
+                                </CollectionView.ItemsLayout>
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate>
+                                        <VerticalStackLayout VerticalOptions="End" Spacing="8">
+                                            <Label Text="{Binding LoanCount}" HorizontalOptions="Center" FontSize="11" TextColor="#6B7280" FontAttributes="Bold"/>
+                                            <Border HeightRequest="{Binding BarHeight}" 
+                                                    WidthRequest="24" 
+                                                    BackgroundColor="{Binding BarColor}" 
+                                                    StrokeShape="RoundRectangle 4"
+                                                    StrokeThickness="0"
+                                                    HorizontalOptions="Center"/>
+                                            <Label Text="{Binding MonthLabel}" HorizontalOptions="Center" FontSize="12" FontAttributes="Bold" TextColor="#374151"/>
+                                        </VerticalStackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Top 5 Sách hot nhất" FontSize="16" FontAttributes="Bold" TextColor="#374151"/>
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ReportData.TopBooks}" Spacing="15">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="5">
+                                        <Label Grid.Row="0" Grid.Column="0" Text="{Binding Title}" FontAttributes="Bold" FontSize="13" TextColor="#1F2937" LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding BorrowCount, StringFormat='{0} lượt'}" FontSize="12" TextColor="#6C63FF" FontAttributes="Bold"/>
+                                        <Label Grid.Row="1" Grid.Column="0" Text="{Binding Author}" FontSize="11" TextColor="#9CA3AF"/>
+                                        <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="8" WidthRequest="{Binding BarWidth}" Color="{Binding BarColor}" HorizontalOptions="Start" CornerRadius="4" Margin="0,5,0,0"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="20" Margin="0,0,0,20">
+                    <VerticalStackLayout Spacing="15">
+                        <Label Text="Độc giả tích cực" FontSize="16" FontAttributes="Bold" TextColor="#374151"/>
+
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding ReportData.TopUsers}" Spacing="10">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <Border StrokeShape="RoundRectangle 10" BackgroundColor="#F9FAFB" StrokeThickness="0" Padding="10">
+                                        <Grid ColumnDefinitions="40, *, Auto">
+                                            <Border Grid.Column="0" HeightRequest="36" WidthRequest="36" StrokeShape="RoundRectangle 18" BackgroundColor="{Binding RankColor}" VerticalOptions="Center" HorizontalOptions="Center" StrokeThickness="0">
+                                                <Label Text="👤" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontSize="16"/>
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="12,0,0,0" Spacing="2">
+                                                <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="13" TextColor="#374151"/>
+                                                <Label Text="{Binding Username}" FontSize="11" TextColor="#6B7280"/>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="2" BackgroundColor="#E0E7FF" StrokeShape="RoundRectangle 8" Padding="12,6" VerticalOptions="Center" StrokeThickness="0">
+                                                <Label Text="{Binding BorrowCount, StringFormat='{0}'}" TextColor="#4F46E5" FontSize="12" FontAttributes="Bold"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

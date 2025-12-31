@@ -6,106 +6,125 @@
              BackgroundColor="#F3F4F6"
              Shell.NavBarIsVisible="False">
 
-    <Grid>
-        <BoxView IsHitTestVisible="False">
-            <BoxView.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#F3F4F6" Offset="0.0" />
-                    <GradientStop Color="#EDE9FE" Offset="1.0" />
-                </LinearGradientBrush>
-            </BoxView.Background>
-        </BoxView>
+    <Grid RowDefinitions="Auto, *">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Padding="25,20,25,10" BackgroundColor="White">
+            <VerticalStackLayout Spacing="4">
+                <Label Text="HỆ THỐNG QUẢN TRỊ" 
+                       FontSize="12" 
+                       TextColor="#6B7280" 
+                       FontAttributes="Bold"/>
+                <Label Text="Tổng quan thư viện" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       TextColor="#1F2937"/>
+            </VerticalStackLayout>
 
-        <Grid RowDefinitions="Auto, *">
+            <Border Grid.Column="1" 
+                    StrokeShape="RoundRectangle 12" 
+                    BackgroundColor="#FEF2F2" 
+                    StrokeThickness="0"
+                    HeightRequest="45" 
+                    WidthRequest="45"
+                    VerticalOptions="Center">
+                <Label Text="⏻" 
+                       FontSize="22" 
+                       TextColor="#EF4444" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       FontAttributes="Bold"/>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnLogoutClicked"/>
+                </Border.GestureRecognizers>
+            </Border>
+        </Grid>
 
-            <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Padding="25,20,25,10">
-                <VerticalStackLayout Spacing="4">
-                    <Label Text="Xin chào, Admin" 
-                           FontSize="14" 
-                           TextColor="#6B7280" 
-                           FontAttributes="Bold"/>
-                    <Label Text="Bảng điều khiển" 
-                           FontSize="24" 
-                           FontAttributes="Bold" 
-                           TextColor="#1F2937"/>
+        <ScrollView Grid.Row="1" Padding="20">
+            <VerticalStackLayout Spacing="20">
+
+                <Grid ColumnDefinitions="*, *" ColumnSpacing="15">
+                    <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="15">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+                        <VerticalStackLayout>
+                            <Label Text="Lượt mượn (30 ngày)" FontSize="13" TextColor="#6B7280"/>
+                            <Label Text="{Binding AnalyticsData.TotalLoansThisMonth}" FontSize="28" FontAttributes="Bold" TextColor="#6C63FF"/>
+                            <HorizontalStackLayout Spacing="5">
+                                <Label Text="{Binding AnalyticsData.GrowthRate, StringFormat='{}{0}%'}" 
+                                       TextColor="{Binding GrowthColor}" FontSize="12" FontAttributes="Bold"/>
+                                <Label Text="so với tháng trước" FontSize="12" TextColor="#9CA3AF"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" Padding="15">
+                        <Border.Shadow>
+                            <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
+                        </Border.Shadow>
+                        <VerticalStackLayout>
+                            <Label Text="Người dùng rủi ro" FontSize="13" TextColor="#6B7280"/>
+                            <Label Text="{Binding RiskCount}" FontSize="28" FontAttributes="Bold" TextColor="#EF4444"/>
+                            <Label Text="Cần theo dõi sát" FontSize="12" TextColor="#9CA3AF"/>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="DỰ BÁO NHẬP KHO (AI TRENDS)" FontSize="14" FontAttributes="Bold" TextColor="#374151"/>
+
+                    <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="#6C63FF"/>
+
+                    <CollectionView ItemsSource="{Binding AnalyticsData.RestockSuggestions}" HeightRequest="220" IsVisible="{Binding IsNotLoading}">
+                        <CollectionView.EmptyView>
+                            <Label Text="Kho sách đang ổn định, chưa cần nhập thêm." HorizontalOptions="Center" TextColor="#9CA3AF" Padding="20"/>
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border StrokeShape="RoundRectangle 10" BackgroundColor="White" Margin="0,0,0,10" StrokeThickness="0" Padding="15">
+                                    <Grid ColumnDefinitions="Auto, *, Auto">
+                                        <Label Text="⚠️" FontSize="20" VerticalOptions="Center" Margin="0,0,10,0" TextColor="{Binding ColorCode}"/>
+
+                                        <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14" LineBreakMode="TailTruncation"/>
+                                            <Label Text="{Binding Suggestion}" FontSize="12" TextColor="{Binding ColorCode}"/>
+                                            <Label Text="{Binding CurrentStock, StringFormat='Còn lại: {0}'}" FontSize="11" TextColor="#6B7280"/>
+                                        </VerticalStackLayout>
+
+                                       
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </VerticalStackLayout>
 
-                <Border Grid.Column="1" 
-                        StrokeShape="RoundRectangle 12" 
-                        BackgroundColor="White" 
-                        StrokeThickness="0"
-                        HeightRequest="45" 
-                        WidthRequest="45"
-                        VerticalOptions="Center">
-                    <Border.Shadow>
-                        <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10" />
-                    </Border.Shadow>
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="QUẢN LÝ NGHIỆP VỤ" FontSize="14" FontAttributes="Bold" TextColor="#374151"/>
 
-                    <Label Text="⏻" 
-                           FontSize="22" 
-                           TextColor="#EF4444" 
-                           HorizontalOptions="Center" 
-                           VerticalOptions="Center"
-                           FontAttributes="Bold"/>
+                    <CollectionView ItemsSource="{Binding MenuItems}" HeightRequest="320">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="15" VerticalItemSpacing="15" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Border StrokeShape="RoundRectangle 15" BackgroundColor="White" StrokeThickness="0" HeightRequest="100">
+                                    <Border.Shadow>
+                                        <Shadow Brush="#000000" Opacity="0.05" Offset="0,4" Radius="10"/>
+                                    </Border.Shadow>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Command}"/>
+                                    </Border.GestureRecognizers>
+                                    <Grid RowDefinitions="*, Auto" Padding="15">
+                                        <Label Text="{Binding Icon}" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                        <Label Grid.Row="1" Text="{Binding Title}" FontSize="13" FontAttributes="Bold" TextColor="#1F2937" HorizontalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
 
-                    <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="OnLogoutClicked"/>
-                    </Border.GestureRecognizers>
-                </Border>
-            </Grid>
-
-            <ScrollView Grid.Row="1" Padding="20,10,20,20">
-                <CollectionView ItemsSource="{Binding MenuItems}">
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" 
-                                         Span="2" 
-                                         HorizontalItemSpacing="15" 
-                                         VerticalItemSpacing="15" />
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Border StrokeShape="RoundRectangle 20"
-                                    BackgroundColor="White"
-                                    StrokeThickness="0"
-                                    HeightRequest="140">
-                                <Border.Shadow>
-                                    <Shadow Brush="#6C63FF" Opacity="0.08" Offset="0,5" Radius="15"/>
-                                </Border.Shadow>
-
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Command}"/>
-                                </Border.GestureRecognizers>
-
-                                <Grid RowDefinitions="*, Auto" Padding="15">
-                                    <Border Grid.Row="0"
-                                            HeightRequest="60"
-                                            WidthRequest="60"
-                                            StrokeShape="RoundRectangle 30"
-                                            BackgroundColor="#F3F4F6"
-                                            StrokeThickness="0"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center">
-                                        <Label Text="{Binding Icon}" 
-                                               FontSize="32" 
-                                               HorizontalOptions="Center" 
-                                               VerticalOptions="Center"/>
-                                    </Border>
-
-                                    <Label Grid.Row="1" 
-                                           Text="{Binding Title}" 
-                                           FontSize="15" 
-                                           FontAttributes="Bold" 
-                                           TextColor="#1F2937"
-                                           HorizontalOptions="Center"
-                                           HorizontalTextAlignment="Center"
-                                           Margin="0,10,0,0"/>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </ScrollView>
-        </Grid>
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

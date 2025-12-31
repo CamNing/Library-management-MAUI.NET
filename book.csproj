@@ -70,6 +70,9 @@
 		<None Remove="LibraryAPI\**" />
 	</ItemGroup>
 	<ItemGroup>
+	  <MauiXaml Update="Pages\Admin\ReportPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\Reader\ChatPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
